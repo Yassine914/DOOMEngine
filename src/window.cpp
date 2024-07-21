@@ -1,16 +1,24 @@
 #include "../include/window.h"
 
+#include <iostream>
+
 namespace win {
 
-void ErrorCallback(i32 error, const char *description)
+i32 Window::width = DEF_WIDTH, Window::height = DEF_HEIGHT;
+
+void Window::ErrorCallback(i32 error, const char *description)
 {
     fprintf(stderr, "error: %s\n", description);
+}
+
+void Window::OnWindowResize(GLFWwindow *window, i32 width, i32 height)
+{
+    Window::SetWindowSize(width, height);
 }
 
 void Window::FrameBufferSizeCallback(GLFWwindow *window, i32 width, i32 height)
 {
     glViewport(0, 0, width, height);
-    Window::SetWindowSize(width, height);
 }
 
 void Window::InitializeWindow()
@@ -25,16 +33,24 @@ void Window::InitializeWindow()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VRS_MAJOR);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VRS_MINOR);
 
-    glfwSetErrorCallback(ErrorCallback);
-    glfwSetFramebufferSizeCallback(Window::window, Window::FrameBufferSizeCallback);
+    glfwSetErrorCallback(Window::ErrorCallback);
 
+    if(Window::resizeable)
+    {
+        // TODO: fix frame resizing
+        // glfwSetWindowSizeCallback(Window::window, Window::OnWindowResize);
+        // glfwSetFramebufferSizeCallback(Window::window, Window::FrameBufferSizeCallback);
+    }
     // clang-format off
 
     // TODO: handle fullscreen
 
     Window::window = glfwCreateWindow(
         Window::GetWidth(), Window::GetHeight(), 
-        Window::GetTitle().c_str(), NULL, NULL);
+        Window::GetTitle().c_str(), 
+        NULL, NULL);
+
+    // clang-format on
 
     if(!Window::window)
     {
@@ -43,16 +59,15 @@ void Window::InitializeWindow()
     }
 
     // TODO: setup OpenGL context.
-
     glfwMakeContextCurrent(Window::window);
-    // clang-format on
 }
 
-// TODO: handle resizing
 void Window::Run()
 {
     while(!glfwWindowShouldClose(Window::window))
     {
+        std::cout << "game loop" << std::endl;
+
         // TODO: setup display function.
         glfwSwapBuffers(Window::window);
         glfwPollEvents();

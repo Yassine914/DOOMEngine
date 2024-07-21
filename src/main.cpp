@@ -100,5 +100,4 @@ void display(GLFWwindow *window, double currentTime)
     glPointSize(30.0f);
     glDrawArrays(GL_POINT, 1, 1);
 }
-
 */

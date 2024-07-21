@@ -12,8 +12,6 @@
 
 namespace win {
 
-void ErrorCallback(u32 error, const char *description);
-
 class Window
 {
     private:
@@ -29,8 +27,8 @@ class Window
     Window()
         :fullscreen{false}, resizeable{true}, title{"GLFW window"} 
     {
-        Window::width = DEF_WIDTH;
-        Window::height = DEF_HEIGHT;
+        width = DEF_WIDTH;
+        height = DEF_HEIGHT;
     }
 
     // clang-format on
@@ -49,17 +47,17 @@ class Window
             return;
         }
 
-        // TODO: resize window (glfw)
         Window::width = width;
         Window::height = height;
     }
 
     static inline void SetDefaultWindowSize()
     {
-        Window::width = DEF_WIDTH;
-        Window::height = DEF_HEIGHT;
+        width = DEF_WIDTH;
+        height = DEF_HEIGHT;
     }
 
+    static void ErrorCallback(i32 error, const char *description);
     static void FrameBufferSizeCallback(GLFWwindow *window, i32 width, i32 height);
 
     inline void SetFullscreen(bool fs) { this->fullscreen = fs; }
@@ -73,6 +71,7 @@ class Window
     void Run();
 
     // TODO: setup event to send when window is resized
+    static void OnWindowResize(GLFWwindow *window, i32 width, i32 height);
 
     // destructor
     ~Window();

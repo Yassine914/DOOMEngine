@@ -4,7 +4,7 @@
 #define WIN_WIDTH 640
 #define WIN_HEIGHT 480
 #define WIN_FULLSCREEN false
-#define WIN_RESIZEABLE false
+#define WIN_RESIZEABLE true
 #define WIN_TITLE "DOOM Engine v0.0.1"
 
 #define V_SYNC true
@@ -24,8 +24,14 @@ int main(int argc, char **argv)
     window->SetWindowTitle(WIN_TITLE);
 
     window->InitializeWindow();
+    // main game loop
+    window->Run();
 
-    // initialize renderer
+    delete window;
+    return 0;
+
+    // TODO: link OpenGL with GLFW
+    //  initialize renderer
     Renderer *renderer = new Renderer();
 
     renderer->SetVSync(V_SYNC);
@@ -35,8 +41,5 @@ int main(int argc, char **argv)
     renderer->SetFShaderPath(F_SHADER_PATH);
     renderer->InitializeShaders();
 
-    // main game loop
-    window->Run();
-
-    delete window;
+    delete renderer;
 }

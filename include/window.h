@@ -1,48 +1,81 @@
 #include "defines.h"
 #include <string>
 
+#include "glad/glad.h"
+#include "glfw/glfw3.h"
+
 #define DEF_HEIGHT 480
-#define DEF_WIDTH 720
+#define DEF_WIDTH 640
+
+#define GL_VRS_MAJOR 4
+#define GL_VRS_MINOR 3
 
 namespace win {
+
+void ErrorCallback(u32 error, const char *description);
 
 class Window
 {
     private:
-    u32 height, width;
-    b8 fullscreen;
-    std::string name = "GLFW window";
+    static i32 width, height;
+    bool fullscreen, resizeable;
+    std::string title = "GLFW window";
+
+    protected:
+    GLFWwindow *window;
 
     public:
-    Window() : height{DEF_HEIGHT}, width{DEF_WIDTH}, fullscreen{false}
+    // clang-format off
+    Window()
+        :fullscreen{false}, resizeable{true}, title{"GLFW window"} 
     {
-        // TODO: initialize glfw.
+        Window::width = DEF_WIDTH;
+        Window::height = DEF_HEIGHT;
     }
 
-    inline u32 GetHeight() { return this->height; }
+    // clang-format on
 
-    inline u32 GetWidth() { return this->width; }
+    // getter methods
+    inline i32 GetWidth() { return Window::width; }
+    inline i32 GetHeight() { return Window::height; }
+    inline std::string GetTitle() { return this->title; }
 
-    inline void SetWindowSize(u32 width, u32 height)
+    // setter methods
+    static inline void SetWindowSize(i32 width, i32 height)
     {
-        if(width == 0 || height == 0)
+        if(width <= 0 || height <= 0)
         {
             Window::SetDefaultWindowSize();
             return;
         }
 
         // TODO: resize window (glfw)
-        this->width = width;
-        this->height = height;
+        Window::width = width;
+        Window::height = height;
     }
 
-    inline void SetDefaultWindowSize()
+    static inline void SetDefaultWindowSize()
     {
-        this->height = DEF_HEIGHT;
-        this->width = DEF_WIDTH;
+        Window::width = DEF_WIDTH;
+        Window::height = DEF_HEIGHT;
     }
 
-    ~Window() = default;
+    static void FrameBufferSizeCallback(GLFWwindow *window, i32 width, i32 height);
+
+    inline void SetFullscreen(bool fs) { this->fullscreen = fs; }
+    inline void SetResizeable(bool rs) { this->resizeable = rs; }
+    inline void SetWindowTitle(std::string title) { this->title = title; }
+
+    // initialization
+    void InitializeWindow();
+
+    // main game loop
+    void Run();
+
+    // TODO: setup event to send when window is resized
+
+    // destructor
+    ~Window();
 };
 
 } // namespace win

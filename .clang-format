@@ -20,7 +20,7 @@ AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLambdasOnASingleLine: Inline
 AllowShortFunctionsOnASingleLine: Inline
 
-AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
 SpaceBeforeParens: false
 
 PPIndentWidth: 4
@@ -28,3 +28,4 @@ IndentPPDirectives: BeforeHash
 
 IndentAccessModifiers: false
 AccessModifierOffset: 0
+PackConstructorInitializers: NextLine

@@ -10,8 +10,6 @@
 #define GL_VRS_MAJOR 4
 #define GL_VRS_MINOR 3
 
-namespace win {
-
 class Window
 {
     private:
@@ -37,6 +35,7 @@ class Window
     inline i32 GetWidth() { return Window::width; }
     inline i32 GetHeight() { return Window::height; }
     inline std::string GetTitle() { return this->title; }
+    inline GLFWwindow *GetWindow() { return this->window; };
 
     // setter methods
     static inline void SetWindowSize(i32 width, i32 height)
@@ -57,9 +56,6 @@ class Window
         height = DEF_HEIGHT;
     }
 
-    static void ErrorCallback(i32 error, const char *description);
-    static void FrameBufferSizeCallback(GLFWwindow *window, i32 width, i32 height);
-
     inline void SetFullscreen(bool fs) { this->fullscreen = fs; }
     inline void SetResizeable(bool rs) { this->resizeable = rs; }
     inline void SetWindowTitle(std::string title) { this->title = title; }
@@ -70,11 +66,11 @@ class Window
     // main game loop
     void Run();
 
-    // TODO: setup event to send when window is resized
+    // glfw callbacks
+    static void ErrorCallback(i32 error, const char *description);
+    void InitializeResizing();
     static void OnWindowResize(GLFWwindow *window, i32 width, i32 height);
 
     // destructor
     ~Window();
 };
-
-} // namespace win

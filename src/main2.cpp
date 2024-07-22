@@ -8,10 +8,8 @@
 #define WIN_TITLE "DOOM Engine v0.0.1"
 
 #define V_SYNC true
-#define V_SHADER_PATH "./shaders/vertShader.glsl"
-#define F_SHADER_PATH "./shaders/fragShader.glsl"
-
-using namespace win;
+#define V_SHADER_PATH "G:/Projects/CodeProjects/DOOMEngine/src/shaders/fragShader.glsl"
+#define F_SHADER_PATH "G:/Projects/CodeProjects/DOOMEngine/src/shaders/vertShader.glsl"
 
 int main(int argc, char **argv)
 {
@@ -24,22 +22,27 @@ int main(int argc, char **argv)
     window->SetWindowTitle(WIN_TITLE);
 
     window->InitializeWindow();
-    // main game loop
-    window->Run();
 
-    delete window;
-    return 0;
-
-    // TODO: link OpenGL with GLFW
-    //  initialize renderer
-    Renderer *renderer = new Renderer();
+    // initialize renderer
+    Renderer *renderer = new Renderer(window->GetWindow());
 
     renderer->SetVSync(V_SYNC);
+    window->InitializeResizing();
 
     // initialize shaders
     renderer->SetVShaderPath(V_SHADER_PATH);
     renderer->SetFShaderPath(F_SHADER_PATH);
     renderer->InitializeShaders();
+
+    // main game loop
+    window->Run();
+
+    // FIXME: link OpenGL before delete window;
+    delete window;
+    return 0;
+
+    // TODO: link OpenGL with GLFW
+    //  initialize renderer
 
     delete renderer;
 }

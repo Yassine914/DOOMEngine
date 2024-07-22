@@ -17,7 +17,7 @@ class Renderer
     GLuint renderProgram;
 
     public:
-    Renderer();
+    Renderer(GLFWwindow *window);
 
     // getters and setters
     inline void SetVSync(bool vsync) { this->vsync = vsync; }

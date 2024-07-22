@@ -13,6 +13,11 @@ GLuint vao[numVAOs];
 
 void display(GLFWwindow *window, double currentTime);
 
+void OnWindowResize(GLFWwindow *window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
 void Init(GLFWwindow *window)
 {
     // Creating the shader programs and Generating Vertices
@@ -51,6 +56,10 @@ int main()
         return 2;
     }
     glfwSwapInterval(1); // for vsync
+
+    // load the frame buffer size callback after
+    // loading OpenGL
+    glfwSetFramebufferSizeCallback(window, OnWindowResize);
 
     Init(window); // init shaders
 

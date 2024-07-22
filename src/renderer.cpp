@@ -1,6 +1,8 @@
 #include "../include/renderer.h"
 
-Renderer::Renderer()
+#include <iostream>
+
+Renderer::Renderer(GLFWwindow *window)
 {
     Renderer::version = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     if(Renderer::version == 0)
@@ -17,6 +19,7 @@ Renderer::Renderer()
 
 std::string Renderer::ReadShaderSource(const char *filePath)
 {
+    std::cout << "shader source: " << filePath << std::endl;
     std::string content;
     std::ifstream fileStream(filePath, std::ios::in);
     std::string line = "";
@@ -92,8 +95,10 @@ GLuint Renderer::CreateShaderProgram()
 
 void Renderer::InitializeShaders()
 {
+    std::cout << "heelloo from the shader source!";
     Renderer::renderProgram = Renderer::CreateShaderProgram();
+    std::cout << "should've rendered the shaders properly.." << std::endl;
 
-    // TODO: create vertex arrat objects
+    // TODO: create vertex array objects
     //       and vertex buffer objects
 }

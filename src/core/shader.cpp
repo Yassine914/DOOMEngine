@@ -9,20 +9,20 @@ Shader::Shader(const char *vertPath, const char *fragPath)
     const char *fShaderSrc = fShaderStr.c_str();
 
     // create empty shader objects
-    GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
+    vShaderID = glCreateShader(GL_VERTEX_SHADER);
+    fShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
     // link shaders with the src files
-    glShaderSource(vShader, 1, &vShaderSrc, NULL);
-    glShaderSource(fShader, 1, &fShaderSrc, NULL);
+    glShaderSource(vShaderID, 1, &vShaderSrc, NULL);
+    glShaderSource(fShaderID, 1, &fShaderSrc, NULL);
 
     // compile vertex shader.
-    glCompileShader(vShader);
+    glCompileShader(vShaderID);
 
     GLint vertCompiled, fragCompiled, linked;
 
     // Renderer::CheckOpenGLError(); // TODO: implement logging.
-    glGetShaderiv(vShader, GL_COMPILE_STATUS, &vertCompiled);
+    glGetShaderiv(vShaderID, GL_COMPILE_STATUS, &vertCompiled);
     if(vertCompiled != 1)
     {
         // TODO: log error.
@@ -30,10 +30,10 @@ Shader::Shader(const char *vertPath, const char *fragPath)
     }
 
     // compile fragment shader.
-    glCompileShader(fShader);
+    glCompileShader(fShaderID);
 
     // Renderer::CheckOpenGLError();
-    glGetShaderiv(fShader, GL_COMPILE_STATUS, &fragCompiled);
+    glGetShaderiv(fShaderID, GL_COMPILE_STATUS, &fragCompiled);
     if(fragCompiled != 1)
     {
         // TODO: log error.
@@ -42,8 +42,8 @@ Shader::Shader(const char *vertPath, const char *fragPath)
 
     ID = glCreateProgram();
 
-    glAttachShader(ID, vShader);
-    glAttachShader(ID, fShader);
+    glAttachShader(ID, vShaderID);
+    glAttachShader(ID, fShaderID);
 
     glLinkProgram(ID);
 
@@ -54,6 +54,9 @@ Shader::Shader(const char *vertPath, const char *fragPath)
         // TODO: log error.
         // Renderer::PrintProgramLog(vfProgram);
     }
+
+    glDeleteShader(vShaderID);
+    glDeleteShader(fShaderID);
 }
 
 std::string Shader::ReadFileSource(const char *filePath)

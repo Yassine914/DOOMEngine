@@ -19,7 +19,6 @@
     "clang-format.executable": "clang-format",
     "clang-format.language.cpp.enable": true,
     "clang-format.language.c.enable": true,
-    "clang-format.language.glsl.enable": true,
     "editor.formatOnSave": true,
     "editor.autoIndent": "advanced",
     "clang-format.fallbackStyle": "Microsoft",

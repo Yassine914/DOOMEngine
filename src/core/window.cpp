@@ -28,7 +28,7 @@ void Window::InitializeWindow()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VRS_MAJOR);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VRS_MINOR);
 
-    glfwSetErrorCallback(Window::ErrorCallback);
+    glfwSetErrorCallback(ErrorCallback);
 
     if(Window::fullscreen)
     {
@@ -46,31 +46,31 @@ void Window::InitializeWindow()
     Window::monitorHeight = screen->width;
 
     // clang-format off
-    if(Window::fullscreen)
+    if(fullscreen)
     {
-        Window::SetWindowSize(Window::monitorWidth, Window::monitorHeight);
+        SetWindowSize(monitorWidth, monitorHeight);
 
-        Window::window = glfwCreateWindow(
-            Window::monitorWidth, Window::monitorHeight,
-            Window::GetTitle().c_str(),
-            Window::monitor, nullptr);
+        window = glfwCreateWindow(
+            monitorWidth, monitorHeight,
+            GetTitle().c_str(),
+            monitor, nullptr);
     }
     else
     {
-        Window::window = glfwCreateWindow(
-            Window::GetWidth(), Window::GetHeight(), 
-            Window::GetTitle().c_str(), 
+        window = glfwCreateWindow(
+            GetWidth(), GetHeight(), 
+            GetTitle().c_str(), 
             nullptr, nullptr);
     }
     // clang-format on
 
-    if(!Window::window)
+    if(!window)
     {
         ErrorCallback(1, "window was not correctly initialized");
         glfwTerminate();
     }
 
-    glfwMakeContextCurrent(Window::window);
+    glfwMakeContextCurrent(window);
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -78,18 +78,18 @@ void Window::InitializeWindow()
         ErrorCallback(1, "couldn't load OpenGL");
     }
 
-    if(Window::VSyncEnabled()) glfwSwapInterval(1);
+    if(VSyncEnabled()) glfwSwapInterval(1);
 
-    if(Window::resizeable)
+    if(resizeable)
     {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        glfwSetFramebufferSizeCallback(Window::window, Window::OnWindowResize);
+        glfwSetFramebufferSizeCallback(window, OnWindowResize);
     }
 }
 
 void Window::Run()
 {
-    while(!glfwWindowShouldClose(Window::window))
+    while(!glfwWindowShouldClose(window))
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -105,13 +105,13 @@ void Window::Run()
         //       in the renderer class
 
         // check events and swap buffers
-        glfwSwapBuffers(Window::window);
+        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 }
 
 Window::~Window()
 {
-    glfwDestroyWindow(Window::window);
+    glfwDestroyWindow(window);
     glfwTerminate();
 }

@@ -15,7 +15,7 @@ if defined cppFiles set cppFiles=!cppFiles:~1!
 popd
 
 rem dependencies needing compilation
-set thirdparty=./src/glad.c
+set thirdparty=./thirdparty/glad.c
 
 set assembly=doomEngine
 
@@ -27,6 +27,6 @@ set defines=-D_DEBUG
 
 echo building %assembly%
 
-clang++ %cppFiles% %thirdparty% %compilerFlags% -o ./bin/%assembly% %defines% %includeFlags% %linkerFlags%
+clang++ %cppFiles%  %thirdparty% %compilerFlags% -o ./bin/%assembly% %defines% %includeFlags% %linkerFlags%
 
 echo %assembly% building complete.

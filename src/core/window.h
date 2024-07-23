@@ -1,8 +1,10 @@
-#include "defines.h"
+#pragma once
+
+#include "../defines.h"
 #include <string>
 
-#include "glad/glad.h"
-#include "glfw/glfw3.h"
+#include "../../thirdparty/include/glad/glad.h"
+#include "../../thirdparty/include/glfw/glfw3.h"
 
 #define DEF_HEIGHT 480
 #define DEF_WIDTH 640
@@ -14,16 +16,20 @@ class Window
 {
     private:
     static i32 width, height;
-    bool fullscreen, resizeable;
+    i32 monitorWidth, monitorHeight;
+    bool fullscreen, resizeable, vsync;
     std::string title = "GLFW window";
 
     protected:
     GLFWwindow *window;
+    GLFWmonitor *monitor;
 
     public:
     // clang-format off
     Window()
-        :fullscreen{false}, resizeable{true}, title{"GLFW window"} 
+        :fullscreen{false}, resizeable{true},
+         vsync{true}, title{"GLFW window"},
+         monitorWidth{DEF_WIDTH}, monitorHeight{DEF_HEIGHT}
     {
         width = DEF_WIDTH;
         height = DEF_HEIGHT;
@@ -34,8 +40,13 @@ class Window
     // getter methods
     inline i32 GetWidth() { return Window::width; }
     inline i32 GetHeight() { return Window::height; }
+
     inline std::string GetTitle() { return this->title; }
-    inline GLFWwindow *GetWindow() { return this->window; };
+
+    inline GLFWwindow *GetWindow() { return this->window; }
+    inline GLFWmonitor *GetMonitor() { return this->monitor; }
+
+    inline bool VSyncEnabled() { return this->vsync; }
 
     // setter methods
     static inline void SetWindowSize(i32 width, i32 height)
@@ -58,6 +69,7 @@ class Window
 
     inline void SetFullscreen(bool fs) { this->fullscreen = fs; }
     inline void SetResizeable(bool rs) { this->resizeable = rs; }
+    inline void SetVSync(bool vs) { this->vsync = vs; }
     inline void SetWindowTitle(std::string title) { this->title = title; }
 
     // initialization
@@ -68,7 +80,6 @@ class Window
 
     // glfw callbacks
     static void ErrorCallback(i32 error, const char *description);
-    void InitializeResizing();
     static void OnWindowResize(GLFWwindow *window, i32 width, i32 height);
 
     // destructor

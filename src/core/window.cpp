@@ -1,4 +1,4 @@
-#include "../include/window.h"
+#include "window.h"
 
 // FIXME: remove extra dependencies (add logger class)
 #include <iostream>
@@ -20,7 +20,6 @@ void Window::OnWindowResize(GLFWwindow *window, i32 width, i32 height)
 void Window::InitializeWindow()
 {
     // initialize glfw.
-
     if(!glfwInit())
     {
         ErrorCallback(1, "failed to init GLFW.");
@@ -29,17 +28,7 @@ void Window::InitializeWindow()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VRS_MAJOR);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VRS_MINOR);
 
-    // glfwSetWindowUserPointer(Window::window, reinterpret_cast<void *>(this));
     glfwSetErrorCallback(Window::ErrorCallback);
-
-    if(Window::resizeable)
-    {
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-
-        // FIXME: frame resizing
-
-        // glfwSetFramebufferSizeCallback(window, nullptr);
-    }
 
     if(Window::fullscreen)
     {
@@ -51,12 +40,28 @@ void Window::InitializeWindow()
         // set glfw to render fullscreen
     }
 
-    // clang-format off
-    Window::window = glfwCreateWindow(
-        Window::GetWidth(), Window::GetHeight(), 
-        Window::GetTitle().c_str(), 
-        nullptr, nullptr);
+    Window::monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode *screen = glfwGetVideoMode(monitor);
+    Window::monitorWidth = screen->width;
+    Window::monitorHeight = screen->width;
 
+    // clang-format off
+    if(Window::fullscreen)
+    {
+        Window::SetWindowSize(Window::monitorWidth, Window::monitorHeight);
+
+        Window::window = glfwCreateWindow(
+            Window::monitorWidth, Window::monitorHeight,
+            Window::GetTitle().c_str(),
+            Window::monitor, nullptr);
+    }
+    else
+    {
+        Window::window = glfwCreateWindow(
+            Window::GetWidth(), Window::GetHeight(), 
+            Window::GetTitle().c_str(), 
+            nullptr, nullptr);
+    }
     // clang-format on
 
     if(!Window::window)
@@ -65,14 +70,19 @@ void Window::InitializeWindow()
         glfwTerminate();
     }
 
-    // TODO: setup OpenGL context.
     glfwMakeContextCurrent(Window::window);
-}
 
-void Window::InitializeResizing()
-{
+    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        // TODO: logging errors.
+        ErrorCallback(1, "couldn't load OpenGL");
+    }
+
+    if(Window::VSyncEnabled()) glfwSwapInterval(1);
+
     if(Window::resizeable)
     {
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwSetFramebufferSizeCallback(Window::window, Window::OnWindowResize);
     }
 }
@@ -81,9 +91,20 @@ void Window::Run()
 {
     while(!glfwWindowShouldClose(Window::window))
     {
-        std::cout << "game loop" << std::endl;
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        // TODO: setup display function.
+        // TODO: handle input
+
+        // Create a function that handles input
+        //      in an input class
+
+        // TODO: handle rendering
+
+        // Create a function that handles rendering
+        //       in the renderer class
+
+        // check events and swap buffers
         glfwSwapBuffers(Window::window);
         glfwPollEvents();
     }

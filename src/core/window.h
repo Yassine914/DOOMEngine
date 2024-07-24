@@ -38,15 +38,15 @@ class Window
     // clang-format on
 
     // getter methods
-    inline i32 GetWidth() { return Window::width; }
-    inline i32 GetHeight() { return Window::height; }
+    inline i32 GetWidth() const { return Window::width; }
+    inline i32 GetHeight() const { return Window::height; }
 
-    inline std::string GetTitle() { return this->title; }
+    inline std::string GetTitle() const { return this->title; }
 
-    inline GLFWwindow *GetWindow() { return this->window; }
-    inline GLFWmonitor *GetMonitor() { return this->monitor; }
+    inline GLFWwindow *GetWindow() const { return this->window; }
+    inline GLFWmonitor *GetMonitor() const { return this->monitor; }
 
-    inline bool VSyncEnabled() { return this->vsync; }
+    inline bool VSyncEnabled() const { return this->vsync; }
 
     // setter methods
     static inline void SetWindowSize(i32 width, i32 height)
@@ -77,6 +77,13 @@ class Window
 
     // main game loop
     void Run();
+    inline bool WindowShouldClose() { return glfwWindowShouldClose(window); }
+
+    inline void SetBackgroundColor(f32 r, f32 g, f32 b, f32 a)
+    {
+        glClearColor(r, g, b, a);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
 
     // glfw callbacks
     static void ErrorCallback(i32 error, const char *description);

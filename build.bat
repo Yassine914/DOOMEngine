@@ -15,7 +15,7 @@ if defined cppFiles set cppFiles=!cppFiles:~1!
 popd
 
 rem dependencies needing compilation
-set thirdparty=./thirdparty/glad.c
+set thirdparty=./thirdparty/glad.c ./thirdparty/stb_image.cpp
 
 set assembly=doomEngine
 

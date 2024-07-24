@@ -9,8 +9,8 @@ Shader::Shader(const char *vertPath, const char *fragPath)
     const char *fShaderSrc = fShaderStr.c_str();
 
     // create empty shader objects
-    vShaderID = glCreateShader(GL_VERTEX_SHADER);
-    fShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+    i32 vShaderID = glCreateShader(GL_VERTEX_SHADER);
+    i32 fShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
     // link shaders with the src files
     glShaderSource(vShaderID, 1, &vShaderSrc, NULL);
@@ -75,7 +75,7 @@ std::string Shader::ReadFileSource(const char *filePath)
     return content;
 }
 
-void Shader::Initialize()
+void Shader::MakeActive()
 {
     glUseProgram(ID);
 }

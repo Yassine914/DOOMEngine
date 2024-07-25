@@ -1,6 +1,3 @@
-#include <glm/matrix.hpp>
-#include <glm/trigonometric.hpp>
-
 #include "../include/mats.h"
 
 using namespace glm;

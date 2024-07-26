@@ -16,10 +16,9 @@
 #define WIN_V_SYNC true
 #define WIN_TITLE "DOOM Engine v0.0.1"
 
-// TODO: get relative shader path
-#define V_SHADER_PATH "G:/Projects/CodeProjects/DOOMEngine/resources/shaders/vertShader.glsl"
-#define F_SHADER_PATH "G:/Projects/CodeProjects/DOOMEngine/resources/shaders/fragShader.glsl"
-#define TEXTURE_PATH "G:/Projects/CodeProjects/DOOMEngine/resources/textures/container.jpg"
+#define V_SHADER_PATH "res/shaders/vertShader.glsl"
+#define F_SHADER_PATH "res/shaders/fragShader.glsl"
+#define TEXTURE_PATH "res/textures/container.jpg"
 
 // clang-format off
 f32 triangle[] = 
@@ -55,37 +54,19 @@ int main()
     VertexBuffer vb(triangle, 32 * sizeof(f32));
     IndexBuffer ib(indices, 6);
 
+    va.Bind();
+    vb.Bind();
+    ib.Bind();
+
     VertexBufferLayout layout;
+    // positions
     layout.Push<float>(3);
+    // colors
     layout.Push<float>(3);
+    // texture coords
     layout.Push<float>(2);
 
     va.AddBuffer(vb, layout);
-
-    u32 VBO, VAO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // position attribure (offset = 0; stride = 8 * float)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    // color attribute (offset = 3 * float; stride = 8 * float)
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), (void *)(3 * sizeof(f32)));
-    glEnableVertexAttribArray(1);
-
-    // texture coord attribute (offset = 6 * float, stride = 8 * float)
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), (void *)(6 * sizeof(f32)));
-    glEnableVertexAttribArray(2);
 
     Shader *shaderProgram = new Shader(V_SHADER_PATH, F_SHADER_PATH);
 
@@ -131,7 +112,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture);
 
         shaderProgram->MakeActive();
-        glBindVertexArray(VAO);
+        va.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // check events and swap buffers
@@ -139,9 +120,6 @@ int main()
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
     delete shaderProgram;
-
     delete window;
 }

@@ -22,7 +22,7 @@ void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &la
             element.type, 
             element.normalized,
             layout.GetStride(),
-            (const void *) offset);
+            (const void *) (u64) offset);
         
         offset += element.count * LayoutElement::GetSizeOfType(element.type);
     }

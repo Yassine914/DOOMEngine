@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../defines.h"
+#include "../core/defines.h"
 #include "../../thirdparty/include/glad/glad.h"
 
 class VertexBuffer

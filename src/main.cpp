@@ -1,5 +1,10 @@
 #include "core/window.h"
-#include "core/shader.h"
+
+#include "renderer/vertexBuffer.h"
+#include "renderer/indexBuffer.h"
+#include "renderer/vertexArray.h"
+
+#include "renderer/shader.h"
 
 #include "../thirdparty/include/stb_image.h"
 #include <iostream>
@@ -45,6 +50,17 @@ int main()
     window->SetWindowTitle(WIN_TITLE);
 
     window->InitializeWindow();
+
+    VertexArray va;
+    VertexBuffer vb(triangle, 32 * sizeof(f32));
+    IndexBuffer ib(indices, 6);
+
+    VertexBufferLayout layout;
+    layout.Push<float>(3);
+    layout.Push<float>(3);
+    layout.Push<float>(2);
+
+    va.AddBuffer(vb, layout);
 
     u32 VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);

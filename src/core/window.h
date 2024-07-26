@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../defines.h"
+#include "defines.h"
 #include <string>
 
 #include "../../thirdparty/include/glad/glad.h"

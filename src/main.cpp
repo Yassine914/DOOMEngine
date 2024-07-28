@@ -17,6 +17,8 @@
 #include "../thirdparty/include/glm/glm.hpp"
 #include "../thirdparty/include/glm/gtc/matrix_transform.hpp"
 
+#include "tests/testClearColor.h"
+
 #define WIN_WIDTH 640
 #define WIN_HEIGHT 480
 #define WIN_FULLSCREEN false
@@ -107,15 +109,38 @@ int main()
     // wireframe mode
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    test::Test *currentTest = nullptr;
+    test::TestMenu *testMenu = new test::TestMenu(currentTest);
+    currentTest = testMenu;
+
+    testMenu->AddTest<test::ClearColor>("Clear Color");
+
     glm::vec3 translate(0, 0, 0);
 
     while(!window->WindowShouldClose())
     {
-        renderer->Clear(0.2f, 0.3f, 0.3f, 1.0f);
+        renderer->Clear(0.2f, 0.1f, 0.3f, 1.0f);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        if(currentTest)
+        {
+            currentTest->OnUpdate(0.0f);
+            currentTest->OnRender();
+
+            ImGui::Begin("Test: ");
+
+            if(currentTest != testMenu && ImGui::Button("<"))
+            {
+                delete currentTest;
+                currentTest = testMenu;
+            }
+
+            currentTest->OnImGuiRender();
+            ImGui::End();
+        }
 
         glm::mat4 model = glm::translate(glm::mat4(1.0f), translate);
 
@@ -131,9 +156,8 @@ int main()
 
         // ---------------------- IMGUI WINDOW -------------
         {
-            ImGui::Begin("DOOMEngine Settings");
-
-            ImGui::Text("%.1f FPS", io.Framerate);
+            ImGui::Begin("DOOMEngine Info");
+            ImGui::Text("%.1f FPS || %.1fms/frame", io.Framerate, 1000.0f / io.Framerate);
             ImGui::SliderFloat2("translate", &translate.x, -1.0f, 1.0f);
 
             ImGui::End();

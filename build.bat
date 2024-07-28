@@ -33,6 +33,8 @@ if "%~1"=="-t" (
     ) else (
         clang++ -ftime-report %cppFiles%  %thirdparty% %compilerFlags% -o ./bin/%assembly% %defines% %includeFlags% %linkerFlags% 2>&1 | awk "/Clang front-end time report/" RS="\n\n" ORS="\n\n"
     )
+) else if "%~1"=="-v" (
+    clang++ -v %cppFiles%  %thirdparty% %compilerFlags% -o ./bin/%assembly% %defines% %includeFlags% %linkerFlags%
 ) else (
     clang++ %cppFiles%  %thirdparty% %compilerFlags% -o ./bin/%assembly% %defines% %includeFlags% %linkerFlags%
 )

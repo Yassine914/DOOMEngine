@@ -5,9 +5,17 @@
 #include "renderer/vertexArray.h"
 
 #include "renderer/shader.h"
+#include "renderer/texture.h"
 
-#include "../thirdparty/include/stb_image.h"
+#include "renderer/renderer.h"
+
+#include "vendor/imgui/imgui.h"
+#include "vendor/imgui/imgui_impl_glfw.h"
+#include "vendor/imgui/imgui_impl_opengl3.h"
+
 #include <iostream>
+#include "../thirdparty/include/glm/glm.hpp"
+#include "../thirdparty/include/glm/gtc/matrix_transform.hpp"
 
 #define WIN_WIDTH 640
 #define WIN_HEIGHT 480
@@ -50,6 +58,17 @@ int main()
 
     window->InitializeWindow();
 
+    /// ----------------------- IMGUI INIT --------------------
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window->GetWindow(), true);
+    ImGui_ImplOpenGL3_Init();
+    /// ----------------------- IMGUI INIT --------------------
+
     VertexArray va;
     VertexBuffer vb(triangle, 32 * sizeof(f32));
     IndexBuffer ib(indices, 6);
@@ -68,58 +87,67 @@ int main()
 
     va.AddBuffer(vb, layout);
 
-    Shader *shaderProgram = new Shader(V_SHADER_PATH, F_SHADER_PATH);
+    // model view projection matrices.
+    // move everything to the left to
+    // create the illusion of moving the "camera" right.
+    glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
-    // texture test
-    i32 width, height, nrChannels;
-    u8 *data = stbi_load(TEXTURE_PATH, &width, &height, &nrChannels, 0);
+    Shader shader(V_SHADER_PATH, F_SHADER_PATH);
 
-    u32 texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    shader.Bind();
 
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    Texture texture(TEXTURE_PATH);
 
-    if(data)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "failed to load texture" << std::endl;
-    }
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    stbi_image_free(data);
-    // since it's only one shader,
-    // no need to initialize it every window draw call
-    // TODO: fix main game loop
-    // window->Run();
+    Renderer *renderer = new Renderer();
 
-    // NOTE: wireframe mode
+    // wireframe mode
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    glm::vec3 translate(0, 0, 0);
 
     while(!window->WindowShouldClose())
     {
-        window->SetBackgroundColor(0.2f, 0.3f, 0.3f, 1.0f);
+        renderer->Clear(0.2f, 0.3f, 0.3f, 1.0f);
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), translate);
+
+        // matrices are right multiplicative.
+        // first mult Vec3(pos) with model -> view -> projection
+        glm::mat4 mvp = proj * view * model;
+        shader.SetUniformMat4f("MVPMat", mvp);
 
         // TODO: handle input
 
-        glBindTexture(GL_TEXTURE_2D, texture);
+        texture.Bind();
+        renderer->Draw(va, ib, shader);
 
-        shaderProgram->MakeActive();
-        va.Bind();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        // ---------------------- IMGUI WINDOW -------------
+        {
+            ImGui::Begin("DOOMEngine Settings");
 
-        // check events and swap buffers
-        glfwSwapBuffers(window->GetWindow());
+            ImGui::Text("%.1f FPS", io.Framerate);
+            ImGui::SliderFloat2("translate", &translate.x, -1.0f, 1.0f);
+
+            ImGui::End();
+        }
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwPollEvents();
+        glfwSwapBuffers(window->GetWindow());
     }
 
-    delete shaderProgram;
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     delete window;
 }

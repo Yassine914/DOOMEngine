@@ -102,7 +102,28 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        "**/Thumbs.db": true
+        "**/Thumbs.db": true,
+        ".vscode": true,
+        "LICENSE": true,
+        ".gitignore": true,
+        ".clang-format": true,
+        "include": true,
+        "README.md": true
     },
-    "hide-files.files": [],
+    "hide-files.files": [
+        ".vscode",
+        "LICENSE",
+        ".gitignore",
+        ".clang-format",
+        "include",
+        "README.md"
+    ],
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/thirdparty/include/**",
+        "${workspaceFolder}/thirdparty/src/**"
+    ],
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.workspaceSymbols": "All",
+    "C_Cpp.autocomplete": "default",
+    "C_Cpp.autoAddFileAssociations": true,
 }

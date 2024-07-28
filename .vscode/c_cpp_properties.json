@@ -1,10 +1,12 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "default",
             "includePath": [
                 "${workspaceFolder}/include/**",
-                "${workspaceFolder}/thirdparty/include/"
+                "${workspaceFolder}/thirdparty/include/**",
+                "thirdparty/include/**",
+                "${workspaceFolder}/**"
             ],
             "defines": [
                 "_DEBUG",
@@ -17,5 +19,6 @@
             "compilerPath": "C:/msys64/clang64/bin/clang++.exe"
         }
     ],
-    "version": 4
+    "version": 4,
+    "enableConfigurationSquiggles": true
 }

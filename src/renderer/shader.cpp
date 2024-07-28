@@ -79,7 +79,7 @@ std::string Shader::ReadFileSource(const char *filePath)
     return content;
 }
 
-void Shader::MakeActive()
+void Shader::Bind() const
 {
     glUseProgram(rendererID);
 }

@@ -27,6 +27,14 @@ set defines=-D_DEBUG
 
 echo building %assembly%
 
-clang++ %cppFiles%  %thirdparty% %compilerFlags% -o ./bin/%assembly% %defines% %includeFlags% %linkerFlags%
+if "%~1"=="-t" (
+    if "%~2"=="-v" (
+        clang++ -ftime-report %cppFiles%  %thirdparty% %compilerFlags% -o ./bin/%assembly% %defines% %includeFlags% %linkerFlags% 2>&1 | awk "/User Time/" RS="\n\n\n" ORS="\n\n\n"
+    ) else (
+        clang++ -ftime-report %cppFiles%  %thirdparty% %compilerFlags% -o ./bin/%assembly% %defines% %includeFlags% %linkerFlags% 2>&1 | awk "/Clang front-end time report/" RS="\n\n" ORS="\n\n"
+    )
+) else (
+    clang++ %cppFiles%  %thirdparty% %compilerFlags% -o ./bin/%assembly% %defines% %includeFlags% %linkerFlags%
+)
 
 echo %assembly% building complete.

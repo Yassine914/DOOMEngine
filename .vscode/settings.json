@@ -106,17 +106,19 @@
         ".vscode": true,
         "LICENSE": true,
         ".gitignore": true,
-        ".clang-format": true,
         "include": true,
-        "README.md": true
+        "README.md": true,
+        "imgui.ini": true,
+        ".clang-format": true
     },
     "hide-files.files": [
         ".vscode",
         "LICENSE",
         ".gitignore",
-        ".clang-format",
         "include",
-        "README.md"
+        "README.md",
+        "imgui.ini",
+        ".clang-format"
     ],
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/thirdparty/include/**",

@@ -18,7 +18,7 @@ AlignTrailingComments:
   Kind: Always
   OverEmptyLines: 0
 
-AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: Inline
 AllowShortFunctionsOnASingleLine: Inline
 
@@ -30,4 +30,5 @@ IndentPPDirectives: BeforeHash
 
 IndentAccessModifiers: false
 AccessModifierOffset: 0
-PackConstructorInitializers: NextLine
+PackConstructorInitializers: BinPack
+AlignConsecutiveMacros: Consecutive

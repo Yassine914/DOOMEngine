@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../src/core/defines.h"
+#include "defines.h"
 
 #include <iostream>
 #include <fstream>

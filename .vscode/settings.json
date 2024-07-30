@@ -109,7 +109,8 @@
         "include": true,
         "README.md": true,
         "imgui.ini": true,
-        ".clang-format": true
+        ".clang-format": true,
+        "loggertest": true
     },
     "hide-files.files": [
         ".vscode",
@@ -118,7 +119,8 @@
         "include",
         "README.md",
         "imgui.ini",
-        ".clang-format"
+        ".clang-format",
+        "loggertest"
     ],
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/thirdparty/include/**",

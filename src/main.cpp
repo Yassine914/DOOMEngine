@@ -1,3 +1,5 @@
+#include "core/defines.h"
+#include "core/logger.h"
 #include "core/window.h"
 
 #include "renderer/vertexBuffer.h"
@@ -14,21 +16,22 @@
 #include "vendor/imgui/imgui_impl_opengl3.h"
 
 #include <iostream>
+
 #include "../thirdparty/include/glm/glm.hpp"
 #include "../thirdparty/include/glm/gtc/matrix_transform.hpp"
 
 #include "tests/testClearColor.h"
 
-#define WIN_WIDTH 640
-#define WIN_HEIGHT 480
+#define WIN_WIDTH      640
+#define WIN_HEIGHT     480
 #define WIN_FULLSCREEN false
 #define WIN_RESIZEABLE true
-#define WIN_V_SYNC true
-#define WIN_TITLE "DOOM Engine v0.0.1"
+#define WIN_V_SYNC     true
+#define WIN_TITLE      "DOOM Engine v0.0.1"
 
 #define V_SHADER_PATH "res/shaders/vertShader.glsl"
 #define F_SHADER_PATH "res/shaders/fragShader.glsl"
-#define TEXTURE_PATH "res/textures/container.jpg"
+#define TEXTURE_PATH  "res/textures/container.jpg"
 
 // clang-format off
 f32 triangle[] = 
@@ -130,7 +133,7 @@ int main()
             currentTest->OnUpdate(0.0f);
             currentTest->OnRender();
 
-            ImGui::Begin("Test: ");
+            ImGui::Begin("TEST");
 
             if(currentTest != testMenu && ImGui::Button("<"))
             {

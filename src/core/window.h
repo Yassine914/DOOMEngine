@@ -7,7 +7,7 @@
 #include "../../thirdparty/include/glfw/glfw3.h"
 
 #define DEF_HEIGHT 480
-#define DEF_WIDTH 640
+#define DEF_WIDTH  640
 
 #define GL_VRS_MAJOR 4
 #define GL_VRS_MINOR 3
@@ -78,8 +78,6 @@ class Window
     // main game loop
     void Run();
     inline bool WindowShouldClose() { return glfwWindowShouldClose(window); }
-
-    
 
     // glfw callbacks
     static void ErrorCallback(i32 error, const char *description);

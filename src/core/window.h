@@ -1,10 +1,15 @@
 #pragma once
 
 #include "defines.h"
+#include "logger.h"
 #include <string>
 
 #include "../../thirdparty/include/glad/glad.h"
 #include "../../thirdparty/include/glfw/glfw3.h"
+
+#include "../io/keyboard.h"
+#include "../io/mouse.h"
+#include "../io/joystick.h"
 
 #define DEF_HEIGHT 480
 #define DEF_WIDTH  640
@@ -19,6 +24,8 @@ class Window
     i32 monitorWidth, monitorHeight;
     bool fullscreen, resizeable, vsync;
     std::string title = "GLFW window";
+
+    static Joystick mainJoystick;
 
     protected:
     GLFWwindow *window;

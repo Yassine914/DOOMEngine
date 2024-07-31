@@ -1,4 +1,6 @@
 #pragma once
+// -------------- MINI-LOGGER-CPP ------------
+// made by yassin shehab (Y)
 
 #include "defines.h"
 
@@ -12,7 +14,13 @@
 using std::chrono::system_clock;
 
 #define LOCK_MUTEX(x) std::lock_guard<std::mutex> lock(x)
+#define INITLOG()                                                                                                      \
+    Logger *Logger::instance = nullptr;                                                                                \
+    Logger &Log = *Logger::GetInstance();
 
+// macros for initializing logger with
+// a different outstream.
+// define at the end instead of LOGINIT_COUT()
 #define LOGINIT_COUT()    Logger Log(std::cout)
 #define LOGINIT_CERR()    Logger Log(std::cerr)
 #define LOGINIT_CLOG()    Logger Log(std::clog)
@@ -49,6 +57,7 @@ using std::chrono::system_clock;
 #define LOG_CONSOLE 0
 #define LOG_FILE    1
 
+// default file for file output if one isn't specified
 #define LOG_DEFAULT_FILE "logger.txt"
 
 #define FILE_INFO __FILE__, __LINE__
@@ -88,32 +97,41 @@ class Logger
     std::ostream &outStream;
 
     public:
-    // for thread safety
-    static std::mutex mut;
+    static Logger *instance;
+    std::mutex mut;
 
     // clang-format off
-    public:
     Logger(std::ostream &os)
         :outStream{os}, 
          logLevel{LogLevel::INFO},
          outType{OutputType::CONSOLE}
     {
+
     }
-    
+
+    public:
+    Logger(const Logger &log) = delete;
+
+    static Logger *GetInstance()
+    {
+        if(instance == nullptr)
+            instance = new Logger(std::cout);
+
+        return instance; 
+    }
+
     // setters
     void EnableFileOutput()
     {
         outType = OutputType::FILE;
         filePath = LOG_DEFAULT_FILE;
-        
+
         if(fileStream.is_open())
             fileStream.close();
-       
+
         fileStream.open(filePath, std::ios::out);
     }
-    
-    // TODO: divert output to file instead of logging to console.
-    // TODO: fix file output
+
     void EnableFileOutput(std::string filepath)
     {
         outType = OutputType::FILE;
@@ -150,7 +168,7 @@ class Logger
 
         outStream << "[";
         outStream << OutputColoredHeader((LogLevel) ll);
-        
+
         // TODO: output current time.
         // outStream << " ";
         // OutputTimeStamp();
@@ -319,51 +337,4 @@ class Logger
 
     std::string ResetColor() { return TEXT_WHITE; }
     // clang-format on
-};
-
-std::mutex Logger::mut;
-
-LOGINIT_COUT();
-
-// TODO: fix mutex lock
-
-// --------------------- TIMER CLASS --------------------
-// to time a scope/function and output time in ms or secs
-// temporary timer
-
-struct Timer
-{
-    std::string name;
-    bool ms;
-    std::chrono::time_point<std::chrono::steady_clock> start, end;
-    std::chrono::duration<f64> duration;
-
-    // constructor to start the clock...
-    Timer(std::string name, bool ms) : ms{ms}, name{name} { start = std::chrono::high_resolution_clock::now(); }
-
-    // get the current duration since initialization.
-    f64 GetCurrentDuration(bool ms)
-    {
-        auto time = std::chrono::high_resolution_clock::now();
-        auto currentDuration = time - start;
-
-        if(ms)
-            return currentDuration.count() * 1000.0;
-        else
-            return currentDuration.count();
-    }
-
-    // destructor that outputs duration as soon as the scope is exited.
-    ~Timer()
-    {
-        end = std::chrono::high_resolution_clock::now();
-        duration = end - start;
-
-        f64 timeInMS = duration.count() * 1000.0;
-
-        if(ms)
-            Log(LOG_INFO) << name << ": " << timeInMS << "ms \n";
-        else
-            Log(LOG_INFO) << name << ": " << duration.count() << "s \n";
-    }
 };

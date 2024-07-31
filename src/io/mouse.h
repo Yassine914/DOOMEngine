@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../core/defines.h"
-#include "../core/logger.h"
 
 #include "../../thirdparty/include/glad/glad.h"
 #include "../../thirdparty/include/glfw/glfw3.h"

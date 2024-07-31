@@ -1,13 +1,12 @@
 #include "window.h"
 
-// FIXME: remove extra dependencies (add logger class)
-#include <iostream>
-
 i32 Window::width = DEF_WIDTH, Window::height = DEF_HEIGHT;
+Joystick Window::mainJoystick(0);
 
 void Window::ErrorCallback(i32 error, const char *description)
 {
-    std::cout << "\033[30m" << "error: " << description << "\033[00m" << std::endl;
+    LOGINIT_COUT();
+    Log(LOG_ERROR) << description << "\n";
     fprintf(stderr, "error: %s\n", description);
 }
 
@@ -19,6 +18,8 @@ void Window::OnWindowResize(GLFWwindow *window, i32 width, i32 height)
 
 void Window::InitializeWindow()
 {
+    LOGINIT_COUT();
+
     // initialize glfw.
     if(!glfwInit())
     {
@@ -29,16 +30,6 @@ void Window::InitializeWindow()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VRS_MINOR);
 
     glfwSetErrorCallback(ErrorCallback);
-
-    if(Window::fullscreen)
-    {
-        // TODO: handle fullscreen
-
-        // get the current main monitor
-        // get the width and height of the monitor
-        // update the Window class
-        // set glfw to render fullscreen
-    }
 
     Window::monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode *screen = glfwGetVideoMode(monitor);
@@ -74,40 +65,31 @@ void Window::InitializeWindow()
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        // TODO: logging errors.
         ErrorCallback(1, "couldn't load OpenGL");
     }
 
-    if(VSyncEnabled()) glfwSwapInterval(1);
+    if(VSyncEnabled())
+        glfwSwapInterval(1);
 
     if(resizeable)
     {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwSetFramebufferSizeCallback(window, OnWindowResize);
     }
-}
 
-void Window::Run()
-{
-    while(!glfwWindowShouldClose(window))
-    {
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+    // input callbacks
+    glfwSetKeyCallback(window, Keyboard::KeyCallback);
+    glfwSetCursorPosCallback(window, Mouse::CursorPosCallback);
+    glfwSetMouseButtonCallback(window, Mouse::MouseButtonCallback);
+    glfwSetScrollCallback(window, Mouse::MouseWheelCallback);
 
-        // TODO: handle input
+    // joystick initialization
+    mainJoystick.Update();
 
-        // Create a function that handles input
-        //      in an input class
-
-        // TODO: handle rendering
-
-        // Create a function that handles rendering
-        //       in the renderer class
-
-        // check events and swap buffers
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
+    if(mainJoystick.IsPresent())
+        Log(LOG_INFO) << "joystick " << mainJoystick.GetName() << " is present\n";
+    else
+        Log(LOG_INFO) << "no joystick found.\n";
 }
 
 Window::~Window()

@@ -50,6 +50,9 @@ u32 indices[] =
 };
 // clang-format on
 
+// prototypes
+void ProcessInput();
+
 int main()
 {
     // initialize window
@@ -122,6 +125,8 @@ int main()
 
     while(!window->WindowShouldClose())
     {
+        // process input
+        ProcessInput();
         renderer->Clear(0.2f, 0.1f, 0.3f, 1.0f);
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -188,3 +193,5 @@ int main()
     ImGui::DestroyContext();
     delete window;
 }
+
+void ProcessInput() {}

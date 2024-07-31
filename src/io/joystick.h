@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../core/defines.h"
-#include "../core/logger.h"
 
 #include "../../thirdparty/include/glad/glad.h"
 #include "../../thirdparty/include/glfw/glfw3.h"
@@ -60,6 +59,14 @@ class Joystick
 
     f32 GetAxesState(i32 axis);
     u8 GetButtonState(i32 button);
+
+    i32 GetAxesCount();
+    i32 GetButtonCount();
+
+    bool IsPresent();
+    std::string GetName();
+
+    static i32 GetID(i32 i);
 
     ~Joystick() = default;
 };

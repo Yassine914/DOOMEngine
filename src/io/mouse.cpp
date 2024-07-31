@@ -112,7 +112,7 @@ bool Mouse::GetButtonUp(i32 button)
 {
     return !buttons[button] && ButtonChanged(button);
 }
-bool Mouse::GetBottonDown(i32 button)
+bool Mouse::GetButtonDown(i32 button)
 {
     return buttons[button] && ButtonChanged(button);
 }

@@ -40,7 +40,7 @@ class Mouse
     static bool GetButton(i32 button);
     static bool ButtonChanged(i32 button);
     static bool GetButtonUp(i32 button);
-    static bool GetBottonDown(i32 button);
+    static bool GetButtonDown(i32 button);
 
     ~Mouse() = default;
 };

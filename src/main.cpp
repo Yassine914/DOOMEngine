@@ -11,6 +11,11 @@
 
 #include "renderer/renderer.h"
 
+#include "io/keyboard.h"
+#include "io/mouse.h"
+#include "io/joystick.h"
+#include "io/camera.h"
+
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_glfw.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -87,10 +92,16 @@ u32 indices[] =
 // clang-format on
 
 // prototypes
-void ProcessInput(Window *window);
+void ProcessInput(Window *window, f32 deltaTime);
+
+// globals
+Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f));
 
 int main()
 {
+    f32 deltaTime = 0.0f;
+    f32 lastFrame = 0.0f;
+
     // initialize window
     Window *window = new Window();
 
@@ -101,6 +112,9 @@ int main()
     window->SetWindowTitle(WIN_TITLE);
 
     window->InitializeWindow();
+
+    // NOTE: will remove cursor
+    //
 
     /// ----------------------- IMGUI INIT --------------------
     IMGUI_CHECKVERSION();
@@ -153,7 +167,6 @@ int main()
 
     /// ----------- IMGUI VARS --------------
     f32 rotation[3] = {0.0f, 0.0f, 0.0f};
-    f32 pos[3] = {0.0f, 0.0f, -1.8f};
 
     glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
@@ -161,8 +174,13 @@ int main()
 
     while(!window->WindowShouldClose())
     {
+        // calculate delta time
+        f64 currentTime = glfwGetTime();
+        deltaTime = currentTime - lastFrame;
+        lastFrame = currentTime;
+
         // process input
-        ProcessInput(window);
+        ProcessInput(window, deltaTime);
         renderer->Clear(0.2f, 0.1f, 0.3f, 1.0f);
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -193,7 +211,7 @@ int main()
         model = glm::rotate(model, glm::radians(rot[1]), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(rot[2]), glm::vec3(0.0f, 0.0f, 1.0f));
 
-        view = glm::translate(glm::mat4(1.0f), glm::vec3(pos[0], pos[1], pos[2]));
+        view = camera->GetViewMatrix();
 
         f32 screenRatio = (f32)window->GetWidth() / (f32)window->GetHeight();
         glm::mat4 proj = glm::perspective(glm::radians(45.0f), screenRatio, 0.1f, 100.0f);
@@ -224,14 +242,6 @@ int main()
             }
             ImGui::Separator();
 
-            ImGui::Text("Movement Test");
-            ImGui::SliderFloat3("movement", pos, -3, 3);
-            if(ImGui::Button("reset movement"))
-            {
-                pos[0] = 0.0f;
-                pos[1] = 0.0f;
-                pos[2] = -1.8f;
-            }
             ImGui::End();
         }
 
@@ -255,10 +265,12 @@ int main()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
+    delete camera;
     delete window;
 }
 
-void ProcessInput(Window *window)
+void ProcessInput(Window *window, f32 deltaTime)
 {
     // if ESC is pressed exit
     if(Keyboard::GetKey(GLFW_KEY_ESCAPE))
@@ -266,4 +278,31 @@ void ProcessInput(Window *window)
 
     // update joystick input
     window->UpdateJoystick();
+
+    /// -------------- CAMERA INPUT --------------------
+    if(Keyboard::GetKey(GLFW_KEY_W))
+        camera->UpdateCameraPos(CameraDirection::FORWARD, deltaTime);
+
+    if(Keyboard::GetKey(GLFW_KEY_S))
+        camera->UpdateCameraPos(CameraDirection::BACKWARD, deltaTime);
+
+    if(Keyboard::GetKey(GLFW_KEY_A))
+        camera->UpdateCameraPos(CameraDirection::LEFT, deltaTime);
+
+    if(Keyboard::GetKey(GLFW_KEY_D))
+        camera->UpdateCameraPos(CameraDirection::RIGHT, deltaTime);
+
+    if(Keyboard::GetKey(GLFW_KEY_SPACE))
+        camera->UpdateCameraPos(CameraDirection::UP, deltaTime);
+
+    if(Keyboard::GetKey(GLFW_KEY_LEFT_SHIFT))
+        camera->UpdateCameraPos(CameraDirection::DOWN, deltaTime);
+
+    if(Mouse::GetButtonDown(GLFW_MOUSE_BUTTON_2))
+    {
+        glfwSetInputMode(window->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        // process mouse to move camera
+    }
+    else if(Mouse::GetButtonUp(GLFW_MOUSE_BUTTON_2))
+        glfwSetInputMode(window->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }

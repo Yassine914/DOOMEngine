@@ -34,13 +34,49 @@
 #define TEXTURE_PATH  "res/textures/container.jpg"
 
 // clang-format off
-f32 triangle[] = 
-{
-    // positions          // colors           // texture coords
-     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+f32 cubeVertices[] = {
+    // positions          // texture coords
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
 u32 indices[] = 
@@ -51,7 +87,7 @@ u32 indices[] =
 // clang-format on
 
 // prototypes
-void ProcessInput();
+void ProcessInput(Window *window);
 
 int main()
 {
@@ -78,28 +114,22 @@ int main()
     /// ----------------------- IMGUI INIT --------------------
 
     VertexArray va;
-    VertexBuffer vb(triangle, 32 * sizeof(f32));
-    IndexBuffer ib(indices, 6);
+    VertexBuffer vb(cubeVertices, sizeof(cubeVertices));
+    // IndexBuffer ib(indices, 6);
 
     va.Bind();
     vb.Bind();
-    ib.Bind();
+    // ib.Bind();
 
     VertexBufferLayout layout;
     // positions
     layout.Push<float>(3);
-    // colors
-    layout.Push<float>(3);
+    // colors NOTE: no colors in cube
+    // layout.Push<float>(3);
     // texture coords
     layout.Push<float>(2);
 
     va.AddBuffer(vb, layout);
-
-    // model view projection matrices.
-    // move everything to the left to
-    // create the illusion of moving the "camera" right.
-    glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
     Shader shader(V_SHADER_PATH, F_SHADER_PATH);
 
@@ -121,12 +151,18 @@ int main()
 
     testMenu->AddTest<test::ClearColor>("Clear Color");
 
-    glm::vec3 translate(0, 0, 0);
+    /// ----------- IMGUI VARS --------------
+    f32 rotation[3] = {0.0f, 0.0f, 0.0f};
+    f32 pos[3] = {0.0f, 0.0f, -1.8f};
+
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 proj = glm::mat4(1.0f);
 
     while(!window->WindowShouldClose())
     {
         // process input
-        ProcessInput();
+        ProcessInput(window);
         renderer->Clear(0.2f, 0.1f, 0.3f, 1.0f);
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -138,7 +174,7 @@ int main()
             currentTest->OnUpdate(0.0f);
             currentTest->OnRender();
 
-            ImGui::Begin("TEST");
+            ImGui::Begin("TEST MENU");
 
             if(currentTest != testMenu && ImGui::Button("<"))
             {
@@ -150,24 +186,52 @@ int main()
             ImGui::End();
         }
 
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), translate);
+        /// --------------------- MVP Matrices ------------------------
+        glm::vec3 rot = glm::vec3(rotation[0], rotation[1], rotation[2]);
 
-        // matrices are right multiplicative.
-        // first mult Vec3(pos) with model -> view -> projection
-        glm::mat4 mvp = proj * view * model;
-        shader.SetUniformMat4f("MVPMat", mvp);
+        model = glm::rotate(glm::mat4(1.0f), glm::radians(rot[0]), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(rot[1]), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(rot[2]), glm::vec3(0.0f, 0.0f, 1.0f));
 
-        // TODO: handle input
+        view = glm::translate(glm::mat4(1.0f), glm::vec3(pos[0], pos[1], pos[2]));
+
+        f32 screenRatio = (f32)window->GetWidth() / (f32)window->GetHeight();
+        glm::mat4 proj = glm::perspective(glm::radians(45.0f), screenRatio, 0.1f, 100.0f);
+
+        shader.SetUniformMat4f("model", model);
+        shader.SetUniformMat4f("view", view);
+        shader.SetUniformMat4f("proj", proj);
 
         texture.Bind();
-        renderer->Draw(va, ib, shader);
+        va.Bind();
+
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // renderer->Draw(va, ib, shader);
 
         // ---------------------- IMGUI WINDOW -------------
         {
-            ImGui::Begin("DOOMEngine Info");
+            ImGui::Begin("DOOMEngine");
             ImGui::Text("%.1f FPS || %.1fms/frame", io.Framerate, 1000.0f / io.Framerate);
-            ImGui::SliderFloat2("translate", &translate.x, -1.0f, 1.0f);
+            ImGui::Separator();
 
+            ImGui::Text("Rotate Cube Test");
+            ImGui::SliderFloat3("rotation", rotation, -90, 90);
+            if(ImGui::Button("reset rotation"))
+            {
+                rotation[0] = 0.0f;
+                rotation[1] = 0.0f;
+                rotation[2] = 0.0f;
+            }
+            ImGui::Separator();
+
+            ImGui::Text("Movement Test");
+            ImGui::SliderFloat3("movement", pos, -3, 3);
+            if(ImGui::Button("reset movement"))
+            {
+                pos[0] = 0.0f;
+                pos[1] = 0.0f;
+                pos[2] = -1.8f;
+            }
             ImGui::End();
         }
 
@@ -194,4 +258,12 @@ int main()
     delete window;
 }
 
-void ProcessInput() {}
+void ProcessInput(Window *window)
+{
+    // if ESC is pressed exit
+    if(Keyboard::GetKey(GLFW_KEY_ESCAPE))
+        window->SetWindowShouldClose(true);
+
+    // update joystick input
+    window->UpdateJoystick();
+}

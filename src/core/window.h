@@ -5,7 +5,7 @@
 #include <string>
 
 #include "../../thirdparty/include/glad/glad.h"
-#include "../../thirdparty/include/glfw/glfw3.h"
+#include <GLFW/glfw3.h>
 
 #include "../io/keyboard.h"
 #include "../io/mouse.h"
@@ -83,12 +83,16 @@ class Window
     void InitializeWindow();
 
     // main game loop
-    void Run();
     inline bool WindowShouldClose() { return glfwWindowShouldClose(window); }
+    inline void SetWindowShouldClose(bool shouldClose) { glfwSetWindowShouldClose(window, shouldClose); }
 
     // glfw callbacks
     static void ErrorCallback(i32 error, const char *description);
     static void OnWindowResize(GLFWwindow *window, i32 width, i32 height);
+
+    // joystick input
+    inline bool IsJoystickPresent() { return mainJoystick.IsPresent(); }
+    inline void UpdateJoystick() { mainJoystick.Update(); }
 
     // destructor
     ~Window();

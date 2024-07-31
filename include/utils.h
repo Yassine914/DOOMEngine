@@ -1,5 +1,5 @@
-#include "glad/glad.h"
-#include "glfw/glfw3.h"
+#include "../thirdparty/include/glad/glad.h"
+#include <GLFW/glfw3.h>
 
 #include <fstream>
 #include <iostream>

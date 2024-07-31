@@ -101,20 +101,20 @@
         "**/Thumbs.db": true,
         "LICENSE": true,
         ".gitignore": true,
-        "include": true,
         "README.md": true,
         "imgui.ini": true,
         ".clang-format": true,
-        "loggertest": true
+        "loggertest": true,
+        "include": true
     },
     "hide-files.files": [
         "LICENSE",
         ".gitignore",
-        "include",
         "README.md",
         "imgui.ini",
         ".clang-format",
-        "loggertest"
+        "loggertest",
+        "include"
     ],
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/thirdparty/include/**",

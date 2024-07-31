@@ -3,7 +3,7 @@
 #include "../core/defines.h"
 
 #include "../../thirdparty/include/glad/glad.h"
-#include "../../thirdparty/include/glfw/glfw3.h"
+#include <GLFW/glfw3.h>
 
 class Mouse
 {

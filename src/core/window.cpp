@@ -79,6 +79,7 @@ void Window::InitializeWindow()
 
     // input callbacks
     glfwSetKeyCallback(window, Keyboard::KeyCallback);
+
     glfwSetCursorPosCallback(window, Mouse::CursorPosCallback);
     glfwSetMouseButtonCallback(window, Mouse::MouseButtonCallback);
     glfwSetScrollCallback(window, Mouse::MouseWheelCallback);
@@ -90,6 +91,7 @@ void Window::InitializeWindow()
         Log(LOG_INFO) << "joystick " << mainJoystick.GetName() << " is present\n";
     else
         Log(LOG_INFO) << "no joystick found.\n";
+
 }
 
 Window::~Window()

@@ -1,5 +1,4 @@
 #include "core/defines.h"
-#include "core/logger.h"
 #include "core/window.h"
 
 #include "renderer/vertexBuffer.h"
@@ -11,10 +10,11 @@
 
 #include "renderer/renderer.h"
 
-#include "io/keyboard.h"
-#include "io/mouse.h"
-#include "io/joystick.h"
-#include "io/camera.h"
+#include "input/keyboard.h"
+#include "input/mouse.h"
+#include "input/joystick.h"
+
+#include "core/camera.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_glfw.h"
@@ -34,8 +34,8 @@
 #define WIN_V_SYNC     true
 #define WIN_TITLE      "DOOM Engine v0.0.1"
 
-#define V_SHADER_PATH "res/shaders/vertShader.glsl"
-#define F_SHADER_PATH "res/shaders/fragShader.glsl"
+#define V_SHADER_PATH "res/shaders/basic.vs"
+#define F_SHADER_PATH "res/shaders/basic.fs"
 #define TEXTURE_PATH  "res/textures/container.jpg"
 
 // clang-format off
@@ -97,8 +97,6 @@ void ProcessInput(Window *window, f32 deltaTime);
 // globals
 Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f));
 
-LOGINIT_COUT();
-
 int main()
 {
     f32 deltaTime = 0.0f;
@@ -115,9 +113,6 @@ int main()
 
     window->InitializeWindow();
 
-    // NOTE: will remove cursor
-    //
-
     /// ----------------------- IMGUI INIT --------------------
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -133,33 +128,23 @@ int main()
     VertexBuffer vb(cubeVertices, sizeof(cubeVertices));
     // IndexBuffer ib(indices, 6);
 
-    va.Bind();
-    vb.Bind();
-    // ib.Bind();
+    va.MakeActive();
+    vb.MakeActive();
+    // ib.MakeActive();
 
     VertexBufferLayout layout;
-    // positions
-    layout.Push<float>(3);
-    // colors NOTE: no colors in cube
-    // layout.Push<float>(3);
-    // texture coords
-    layout.Push<float>(2);
+    layout.Push<float>(3); // positions
+    layout.Push<float>(2); // texture coords
 
     va.AddBuffer(vb, layout);
 
     Shader shader(V_SHADER_PATH, F_SHADER_PATH);
-
-    shader.Bind();
+    shader.MakeActive();
 
     Texture texture(TEXTURE_PATH);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     Renderer *renderer = new Renderer();
-
-    // wireframe mode
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    renderer->SetClearColor(0.2f, 0.2f, 0.3f, 1.0f);
 
     test::Test *currentTest = nullptr;
     test::TestMenu *testMenu = new test::TestMenu(currentTest);
@@ -183,7 +168,8 @@ int main()
 
         // process input
         ProcessInput(window, deltaTime);
-        renderer->Clear(0.2f, 0.1f, 0.3f, 1.0f);
+
+        renderer->NewFrame();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -222,8 +208,8 @@ int main()
         shader.SetUniformMat4f("view", view);
         shader.SetUniformMat4f("proj", proj);
 
-        texture.Bind();
-        va.Bind();
+        texture.MakeActive();
+        va.MakeActive();
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
         // renderer->Draw(va, ib, shader);

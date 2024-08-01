@@ -7,9 +7,9 @@
 #include "../../thirdparty/include/glad/glad.h"
 #include <GLFW/glfw3.h>
 
-#include "../io/keyboard.h"
-#include "../io/mouse.h"
-#include "../io/joystick.h"
+#include "../input/keyboard.h"
+#include "../input/mouse.h"
+#include "../input/joystick.h"
 
 #define DEF_HEIGHT 480
 #define DEF_WIDTH  640

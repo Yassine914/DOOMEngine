@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../core/defines.h"
-#include "../core/logger.h"
+#include "defines.h"
 
-#include "mouse.h"
-#include "keyboard.h"
-#include "joystick.h"
+#include "../input/mouse.h"
+#include "../input/keyboard.h"
+#include "../input/joystick.h"
 
 #include "../../thirdparty/include/glm/glm.hpp"
 #include "../../thirdparty/include/glm/gtc/matrix_transform.hpp"

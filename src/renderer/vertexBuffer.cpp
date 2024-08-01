@@ -7,13 +7,13 @@ VertexBuffer::VertexBuffer(const void *data, u32 size)
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 
-void VertexBuffer::Bind() const
+void VertexBuffer::MakeActive() const
 {
 
     glBindBuffer(GL_ARRAY_BUFFER, rendererID);
 }
 
-void VertexBuffer::Unbind() const
+void VertexBuffer::MakeInactive() const
 {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);

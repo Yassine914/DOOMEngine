@@ -1,8 +1,10 @@
 #pragma once
 
 #include "renderer.h"
-
 #include <string>
+
+#include "../core/defines.h"
+#include "../core/logger.h"
 
 class Texture
 {
@@ -15,11 +17,18 @@ class Texture
     public:
     Texture(const std::string &path);
 
-    void Bind(u32 slot = 0) const;
-    void Unbind() const;
+    ///__________________ SETTERS __________________________
+    template <typename T> void SetFilters(const T &texMag, const T &texMin);
+    template <typename T> void SetFilters(const T &filter);
+    template <typename T> void SetWrap(const T &wrap);
+    template <typename T> void SetWrap(const T &wrapS, const T &wrapT);
 
+    ///__________________ GETTERS __________________________
     inline i32 GetWidth() const { return width; }
     inline i32 GetHeight() const { return height; }
+
+    void MakeActive(u32 slot = 0) const;
+    void MakeInactive() const;
 
     ~Texture();
 };

@@ -103,18 +103,14 @@
         ".gitignore": true,
         "README.md": true,
         "imgui.ini": true,
-        ".clang-format": true,
-        "loggertest": true,
-        "include": true
+        ".clang-format": true
     },
     "hide-files.files": [
         "LICENSE",
         ".gitignore",
         "README.md",
         "imgui.ini",
-        ".clang-format",
-        "loggertest",
-        "include"
+        ".clang-format"
     ],
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/thirdparty/include/**",

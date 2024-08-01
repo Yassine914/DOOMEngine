@@ -7,7 +7,6 @@ void Window::ErrorCallback(i32 error, const char *description)
 {
     LOGINIT_COUT();
     Log(LOG_ERROR) << description << "\n";
-    fprintf(stderr, "error: %s\n", description);
 }
 
 void Window::OnWindowResize(GLFWwindow *window, i32 width, i32 height)
@@ -19,7 +18,6 @@ void Window::OnWindowResize(GLFWwindow *window, i32 width, i32 height)
 void Window::InitializeWindow()
 {
     LOGINIT_COUT();
-
     // initialize glfw.
     if(!glfwInit())
     {
@@ -91,7 +89,6 @@ void Window::InitializeWindow()
         Log(LOG_INFO) << "joystick " << mainJoystick.GetName() << " is present\n";
     else
         Log(LOG_INFO) << "no joystick found.\n";
-
 }
 
 Window::~Window()

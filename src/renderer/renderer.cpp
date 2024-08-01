@@ -2,10 +2,9 @@
 
 void Renderer::Draw(const VertexArray &va, const IndexBuffer &ib, const Shader &shader) const
 {
-    shader.Bind();
-    va.Bind();
-    ib.Bind();
+    shader.MakeActive();
+    va.MakeActive();
+    ib.MakeActive();
 
     glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
 }
-

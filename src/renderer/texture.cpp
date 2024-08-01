@@ -7,34 +7,68 @@ Texture::Texture(const std::string &path)
     :filePath{path}, localBuffer{nullptr}, 
      width{0}, height{0}, bpp{0}
 {
+
+    LOGINIT_COUT();
+    
     stbi_set_flip_vertically_on_load(true);
     localBuffer = stbi_load(path.c_str(), &width, &height, &bpp, 4);
 
     glGenTextures(1, &rendererID);
     glBindTexture(GL_TEXTURE_2D, rendererID);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    SetFilters(GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
+    SetWrap(GL_CLAMP_TO_EDGE);
+
+    if(localBuffer)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+        Log(LOG_ERROR, FILE_INFO) << "couldn't load texture\n";
     
     glBindTexture(GL_TEXTURE_2D, 0);
     
     if(localBuffer)
         stbi_image_free(localBuffer);
 }
-// clang-format on
 
-void Texture::Bind(u32 slot /*= 0*/) const
+template<typename T>
+void Texture::SetFilters(const T &filterMag, const T &filterMin)
+{
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMag);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin);
+}
+
+template<typename T>
+void Texture::SetFilters(const T &filter)
+{
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+}
+
+template<typename T>
+void Texture::SetWrap(const T &wrap)
+{
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
+}
+
+template<typename T>
+void Texture::SetWrap(const T &wrapS, const T &wrapT)
+{
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
+}
+
+// clang-format on
+void Texture::MakeActive(u32 slot /*= 0*/) const
 {
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_2D, rendererID);
 }
 
-void Texture::Unbind() const
+void Texture::MakeInactive() const
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }

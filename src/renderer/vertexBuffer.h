@@ -11,8 +11,8 @@ class VertexBuffer
     public:
     VertexBuffer(const void *data, u32 size);
 
-    void Bind() const;
-    void Unbind() const;
+    void MakeActive() const;
+    void MakeInactive() const;
 
     ~VertexBuffer();
 };

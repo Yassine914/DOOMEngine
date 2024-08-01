@@ -1,6 +1,7 @@
 #pragma once
 
-#include "renderer.h"
+#include "../../thirdparty/include/glad/glad.h"
+
 #include <string>
 
 #include "../core/defines.h"

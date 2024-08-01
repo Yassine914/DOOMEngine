@@ -1,14 +1,9 @@
 #include "core/defines.h"
 #include "core/window.h"
 
-#include "renderer/vertexBuffer.h"
-#include "renderer/indexBuffer.h"
-#include "renderer/vertexArray.h"
-
-#include "renderer/shader.h"
-#include "renderer/texture.h"
-
 #include "renderer/renderer.h"
+#include "renderer/texture.h"
+#include "renderer/shader.h"
 
 #include "input/keyboard.h"
 #include "input/mouse.h"
@@ -122,24 +117,10 @@ int main()
     ImGui_ImplOpenGL3_Init();
     /// ----------------------- IMGUI INIT --------------------
 
-    VertexArray va;
-    VertexBuffer vb(cubeVertices, sizeof(cubeVertices));
-    // IndexBuffer ib(indices, 6);
-
-    va.MakeActive();
-    vb.MakeActive();
-    // ib.MakeActive();
-
-    VertexBufferLayout layout;
-    layout.Push<float>(3); // positions
-    layout.Push<float>(2); // texture coords
-
-    va.AddBuffer(vb, layout);
-
     Shader shader(V_SHADER_PATH, F_SHADER_PATH);
     shader.MakeActive();
 
-    Texture texture(TEXTURE_PATH);
+    Texture texture(TEXTURE_PATH, "container");
 
     Renderer *renderer = new Renderer();
     renderer->SetClearColor(0.2f, 0.2f, 0.3f, 1.0f);
@@ -184,7 +165,6 @@ int main()
         shader.SetUniformMat4f("proj", proj);
 
         texture.MakeActive();
-        va.MakeActive();
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
         // renderer->Draw(va, ib, shader);

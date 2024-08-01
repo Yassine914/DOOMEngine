@@ -19,9 +19,9 @@ class Model
     std::vector<Mesh> meshes;
 
     public:
-    Model();
+    Model() {}
 
-    void Initialize();
+    void Initialize() {}
 
     void Render(Shader shader)
     {
@@ -39,5 +39,11 @@ class Model
         }
     }
 
-    ~Model();
+    ~Model()
+    {
+        for(Mesh mesh : meshes)
+        {
+            mesh.Cleanup();
+        }
+    }
 };

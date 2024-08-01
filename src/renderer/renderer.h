@@ -2,10 +2,6 @@
 
 #include "../core/defines.h"
 
-#include "vertexBuffer.h"
-#include "indexBuffer.h"
-#include "vertexArray.h"
-
 #include "shader.h"
 
 class Renderer
@@ -39,6 +35,4 @@ class Renderer
     }
 
     inline void RenderAsWireFrame() { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
-
-    void Draw(const VertexArray &va, const IndexBuffer &ib, const Shader &shader) const;
 };

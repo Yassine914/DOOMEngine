@@ -3,21 +3,23 @@
 #include "../../thirdparty/include/stb_image.h"
 
 // clang-format off
-Texture::Texture(const std::string &path)
-    :filePath{path}, localBuffer{nullptr}, 
+Texture::Texture(const std::string &path, std::string name /* = ""*/)
+    :filePath{path}, name{name}, localBuffer{nullptr}, 
      width{0}, height{0}, bpp{0}
 {
+    SetFilters(GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
+    SetWrap(GL_CLAMP_TO_EDGE);
+}
 
+void Texture::Load()
+{
     LOGINIT_COUT();
     
     stbi_set_flip_vertically_on_load(true);
-    localBuffer = stbi_load(path.c_str(), &width, &height, &bpp, 4);
+    localBuffer = stbi_load(filePath.c_str(), &width, &height, &bpp, 4);
 
-    glGenTextures(1, &rendererID);
-    glBindTexture(GL_TEXTURE_2D, rendererID);
-
-    SetFilters(GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
-    SetWrap(GL_CLAMP_TO_EDGE);
+    glGenTextures(1, &ID);
+    glBindTexture(GL_TEXTURE_2D, ID);
 
     if(localBuffer)
     {
@@ -65,7 +67,7 @@ void Texture::SetWrap(const T &wrapS, const T &wrapT)
 void Texture::MakeActive(u32 slot /*= 0*/) const
 {
     glActiveTexture(GL_TEXTURE0 + slot);
-    glBindTexture(GL_TEXTURE_2D, rendererID);
+    glBindTexture(GL_TEXTURE_2D, ID);
 }
 
 void Texture::MakeInactive() const
@@ -75,5 +77,5 @@ void Texture::MakeInactive() const
 
 Texture::~Texture()
 {
-    glDeleteTextures(1, &rendererID);
+    glDeleteTextures(1, &ID);
 }

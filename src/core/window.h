@@ -85,6 +85,11 @@ class Window
     // main game loop
     inline bool WindowShouldClose() { return glfwWindowShouldClose(window); }
     inline void SetWindowShouldClose(bool shouldClose) { glfwSetWindowShouldClose(window, shouldClose); }
+    inline void NewFrame()
+    {
+        glfwPollEvents();
+        glfwSwapBuffers(window);
+    }
 
     // glfw callbacks
     static void ErrorCallback(i32 error, const char *description);

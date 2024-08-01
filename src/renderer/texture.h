@@ -9,13 +9,18 @@
 class Texture
 {
     private:
-    u32 rendererID;
     std::string filePath;
     u8 *localBuffer;
     i32 width, height, bpp; // bits per pixel
 
     public:
-    Texture(const std::string &path);
+    u32 ID;
+    std::string name;
+
+    public:
+    Texture(const std::string &path, std::string name = "");
+
+    void Load();
 
     ///__________________ SETTERS __________________________
     template <typename T> void SetFilters(const T &texMag, const T &texMin);

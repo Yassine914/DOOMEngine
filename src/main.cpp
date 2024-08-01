@@ -25,8 +25,6 @@
 #include "../thirdparty/include/glm/glm.hpp"
 #include "../thirdparty/include/glm/gtc/matrix_transform.hpp"
 
-#include "tests/testClearColor.h"
-
 #define WIN_WIDTH      640
 #define WIN_HEIGHT     480
 #define WIN_FULLSCREEN false
@@ -146,12 +144,6 @@ int main()
     Renderer *renderer = new Renderer();
     renderer->SetClearColor(0.2f, 0.2f, 0.3f, 1.0f);
 
-    test::Test *currentTest = nullptr;
-    test::TestMenu *testMenu = new test::TestMenu(currentTest);
-    currentTest = testMenu;
-
-    testMenu->AddTest<test::ClearColor>("Clear Color");
-
     /// ----------- IMGUI VARS --------------
     f32 rotation[3] = {0.0f, 0.0f, 0.0f};
 
@@ -174,23 +166,6 @@ int main()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-        if(currentTest)
-        {
-            currentTest->OnUpdate(0.0f);
-            currentTest->OnRender();
-
-            ImGui::Begin("TEST MENU");
-
-            if(currentTest != testMenu && ImGui::Button("<"))
-            {
-                delete currentTest;
-                currentTest = testMenu;
-            }
-
-            currentTest->OnImGuiRender();
-            ImGui::End();
-        }
 
         /// --------------------- MVP Matrices ------------------------
         glm::vec3 rot = glm::vec3(rotation[0], rotation[1], rotation[2]);
@@ -236,18 +211,7 @@ int main()
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        glfwPollEvents();
-        glfwSwapBuffers(window->GetWindow());
-    }
-
-    if(currentTest != testMenu)
-    {
-        delete currentTest;
-        delete testMenu;
-    }
-    else
-    {
-        delete currentTest;
+        window->NewFrame();
     }
 
     ImGui_ImplOpenGL3_Shutdown();

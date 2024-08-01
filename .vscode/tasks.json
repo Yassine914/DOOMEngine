@@ -7,9 +7,7 @@
             "label": "build DOOM Engine",
             "type": "shell",
             "command": ".\\build.bat",
-            "problemMatcher": [
-                "$gcc"
-            ],
+            "problemMatcher": "$gcc",
             "group": {
                 "kind": "build",
                 "isDefault": true

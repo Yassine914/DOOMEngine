@@ -97,6 +97,8 @@ void ProcessInput(Window *window, f32 deltaTime);
 // globals
 Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f));
 
+LOGINIT_COUT();
+
 int main()
 {
     f32 deltaTime = 0.0f;
@@ -214,7 +216,7 @@ int main()
         view = camera->GetViewMatrix();
 
         f32 screenRatio = (f32)window->GetWidth() / (f32)window->GetHeight();
-        glm::mat4 proj = glm::perspective(glm::radians(45.0f), screenRatio, 0.1f, 100.0f);
+        glm::mat4 proj = glm::perspective(glm::radians(camera->zoom), screenRatio, 0.1f, 100.0f);
 
         shader.SetUniformMat4f("model", model);
         shader.SetUniformMat4f("view", view);
@@ -298,11 +300,24 @@ void ProcessInput(Window *window, f32 deltaTime)
     if(Keyboard::GetKey(GLFW_KEY_LEFT_SHIFT))
         camera->UpdateCameraPos(CameraDirection::DOWN, deltaTime);
 
-    if(Mouse::GetButtonDown(GLFW_MOUSE_BUTTON_2))
+    // process mouse movement to rotate camera
+    f64 dx = Mouse::GetDX(), dy = Mouse::GetDY();
+    const f64 sensitivity = 0.5;
+    dx *= sensitivity;
+    dy *= sensitivity;
+
+    if(Mouse::GetButton(GLFW_MOUSE_BUTTON_2) && (dx != 0 || dy != 0))
     {
-        glfwSetInputMode(window->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        // process mouse to move camera
+        camera->UpdateCameraDir(dx, dy);
     }
+
+    // hide cursor while holding RMB
+    if(Mouse::GetButtonDown(GLFW_MOUSE_BUTTON_2))
+        window->DisableCursor();
     else if(Mouse::GetButtonUp(GLFW_MOUSE_BUTTON_2))
-        glfwSetInputMode(window->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        window->EnableCursor();
+
+    f64 scrollDY = Mouse::GetScrollDY();
+    if(scrollDY != 0)
+        camera->UpdateCameraZoom(scrollDY);
 }

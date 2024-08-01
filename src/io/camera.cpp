@@ -17,7 +17,14 @@ void Camera::UpdateCameraDir(f64 dx, f64 dy)
     yaw += dx;
     pitch += dy;
 
-    pitch = std::clamp(pitch, -89.0f, 89.0f);
+    // pitch = std::clamp(pitch, -89.0f, 89.0f);
+
+    if(pitch > 89.0f)
+        pitch = 89.0f;
+    else if(pitch < -89.0f)
+        pitch = -89.0f;
+
+    UpdateCameraVectors();
 }
 
 void Camera::UpdateCameraPos(CameraDirection dir, f64 deltaTime)
@@ -67,7 +74,7 @@ void Camera::UpdateCameraVectors()
 
     glm::vec3 direction;
     direction.x = cos(yawRad) * cos(pitchRad);
-    direction.y = cos(pitchRad);
+    direction.y = sin(pitchRad);
     direction.z = sin(yawRad) * cos(pitchRad);
 
     cameraFront = glm::normalize(direction);

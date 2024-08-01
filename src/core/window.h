@@ -94,6 +94,10 @@ class Window
     inline bool IsJoystickPresent() { return mainJoystick.IsPresent(); }
     inline void UpdateJoystick() { mainJoystick.Update(); }
 
+    // extras
+    inline void EnableCursor() { glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); }
+    inline void DisableCursor() { glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); }
+
     // destructor
     ~Window();
 };

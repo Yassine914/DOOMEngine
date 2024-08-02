@@ -1,15 +1,20 @@
 #include "core/defines.h"
+#include "core/logger.h"
 #include "core/window.h"
 
-#include "renderer/renderer.h"
-#include "renderer/texture.h"
+#include "renderer/vertexBuffer.h"
+#include "renderer/indexBuffer.h"
+#include "renderer/vertexArray.h"
+
 #include "renderer/shader.h"
+#include "renderer/texture.h"
 
-#include "input/keyboard.h"
-#include "input/mouse.h"
-#include "input/joystick.h"
+#include "renderer/renderer.h"
 
-#include "core/camera.h"
+#include "io/keyboard.h"
+#include "io/mouse.h"
+#include "io/joystick.h"
+#include "io/camera.h"
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_glfw.h"
@@ -20,6 +25,8 @@
 #include "../thirdparty/include/glm/glm.hpp"
 #include "../thirdparty/include/glm/gtc/matrix_transform.hpp"
 
+#include "tests/testClearColor.h"
+
 #define WIN_WIDTH      640
 #define WIN_HEIGHT     480
 #define WIN_FULLSCREEN false
@@ -27,8 +34,8 @@
 #define WIN_V_SYNC     true
 #define WIN_TITLE      "DOOM Engine v0.0.1"
 
-#define V_SHADER_PATH "res/shaders/basic.vs"
-#define F_SHADER_PATH "res/shaders/basic.fs"
+#define V_SHADER_PATH "res/shaders/vertShader.glsl"
+#define F_SHADER_PATH "res/shaders/fragShader.glsl"
 #define TEXTURE_PATH  "res/textures/container.jpg"
 
 // clang-format off
@@ -90,6 +97,8 @@ void ProcessInput(Window *window, f32 deltaTime);
 // globals
 Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f));
 
+LOGINIT_COUT();
+
 int main()
 {
     f32 deltaTime = 0.0f;
@@ -106,6 +115,9 @@ int main()
 
     window->InitializeWindow();
 
+    // NOTE: will remove cursor
+    //
+
     /// ----------------------- IMGUI INIT --------------------
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -117,13 +129,43 @@ int main()
     ImGui_ImplOpenGL3_Init();
     /// ----------------------- IMGUI INIT --------------------
 
-    Shader shader(V_SHADER_PATH, F_SHADER_PATH);
-    shader.MakeActive();
+    VertexArray va;
+    VertexBuffer vb(cubeVertices, sizeof(cubeVertices));
+    // IndexBuffer ib(indices, 6);
 
-    Texture texture(TEXTURE_PATH, "container");
+    va.Bind();
+    vb.Bind();
+    // ib.Bind();
+
+    VertexBufferLayout layout;
+    // positions
+    layout.Push<float>(3);
+    // colors NOTE: no colors in cube
+    // layout.Push<float>(3);
+    // texture coords
+    layout.Push<float>(2);
+
+    va.AddBuffer(vb, layout);
+
+    Shader shader(V_SHADER_PATH, F_SHADER_PATH);
+
+    shader.Bind();
+
+    Texture texture(TEXTURE_PATH);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     Renderer *renderer = new Renderer();
-    renderer->SetClearColor(0.2f, 0.2f, 0.3f, 1.0f);
+
+    // wireframe mode
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    test::Test *currentTest = nullptr;
+    test::TestMenu *testMenu = new test::TestMenu(currentTest);
+    currentTest = testMenu;
+
+    testMenu->AddTest<test::ClearColor>("Clear Color");
 
     /// ----------- IMGUI VARS --------------
     f32 rotation[3] = {0.0f, 0.0f, 0.0f};
@@ -141,12 +183,28 @@ int main()
 
         // process input
         ProcessInput(window, deltaTime);
-
-        renderer->NewFrame();
+        renderer->Clear(0.2f, 0.1f, 0.3f, 1.0f);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        if(currentTest)
+        {
+            currentTest->OnUpdate(0.0f);
+            currentTest->OnRender();
+
+            ImGui::Begin("TEST MENU");
+
+            if(currentTest != testMenu && ImGui::Button("<"))
+            {
+                delete currentTest;
+                currentTest = testMenu;
+            }
+
+            currentTest->OnImGuiRender();
+            ImGui::End();
+        }
 
         /// --------------------- MVP Matrices ------------------------
         glm::vec3 rot = glm::vec3(rotation[0], rotation[1], rotation[2]);
@@ -164,7 +222,8 @@ int main()
         shader.SetUniformMat4f("view", view);
         shader.SetUniformMat4f("proj", proj);
 
-        texture.MakeActive();
+        texture.Bind();
+        va.Bind();
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
         // renderer->Draw(va, ib, shader);
@@ -191,7 +250,18 @@ int main()
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        window->NewFrame();
+        glfwPollEvents();
+        glfwSwapBuffers(window->GetWindow());
+    }
+
+    if(currentTest != testMenu)
+    {
+        delete currentTest;
+        delete testMenu;
+    }
+    else
+    {
+        delete currentTest;
     }
 
     ImGui_ImplOpenGL3_Shutdown();

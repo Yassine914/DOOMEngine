@@ -15,8 +15,8 @@ class VertexArray
 
     void AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &layout);
 
-    void MakeActive() const;
-    void MakeInactive() const;
+    void Bind() const;
+    void Unbind() const;
 
     ~VertexArray();
 };

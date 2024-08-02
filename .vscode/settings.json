@@ -91,7 +91,7 @@
         "typeinfo": "cpp",
         "variant": "cpp"
     },
-    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.errorSquiggles": "disabled",
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
@@ -104,7 +104,8 @@
         "README.md": true,
         "imgui.ini": true,
         ".clang-format": true,
-        ".vscode": true
+        "loggertest": true,
+        "include": true
     },
     "hide-files.files": [
         "LICENSE",
@@ -112,7 +113,8 @@
         "README.md",
         "imgui.ini",
         ".clang-format",
-        ".vscode"
+        "loggertest",
+        "include"
     ],
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/thirdparty/include/**",

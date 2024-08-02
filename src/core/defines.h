@@ -18,7 +18,7 @@ typedef double f64;
 
 // boolean types
 typedef char b8;
-#define true  1
+#define true 1
 #define false 0
 
 // define static assertions

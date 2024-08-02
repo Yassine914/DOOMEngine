@@ -7,9 +7,9 @@
 #include "../../thirdparty/include/glad/glad.h"
 #include <GLFW/glfw3.h>
 
-#include "../input/keyboard.h"
-#include "../input/mouse.h"
-#include "../input/joystick.h"
+#include "../io/keyboard.h"
+#include "../io/mouse.h"
+#include "../io/joystick.h"
 
 #define DEF_HEIGHT 480
 #define DEF_WIDTH  640
@@ -85,11 +85,6 @@ class Window
     // main game loop
     inline bool WindowShouldClose() { return glfwWindowShouldClose(window); }
     inline void SetWindowShouldClose(bool shouldClose) { glfwSetWindowShouldClose(window, shouldClose); }
-    inline void NewFrame()
-    {
-        glfwPollEvents();
-        glfwSwapBuffers(window);
-    }
 
     // glfw callbacks
     static void ErrorCallback(i32 error, const char *description);

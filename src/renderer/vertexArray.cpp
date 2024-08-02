@@ -7,8 +7,8 @@ VertexArray::VertexArray()
 
 void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &layout)
 {
-    MakeActive();
-    vb.MakeActive();
+    Bind();
+    vb.Bind();
 
     // clang-format off
     const auto &elements = layout.GetElements();
@@ -30,12 +30,12 @@ void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &la
     // clang-format on
 }
 
-void VertexArray::MakeActive() const
+void VertexArray::Bind() const
 {
     glBindVertexArray(rendererID);
 }
 
-void VertexArray::MakeInactive() const
+void VertexArray::Unbind() const
 {
     glBindVertexArray(0);
 }

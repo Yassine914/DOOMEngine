@@ -12,8 +12,8 @@ class IndexBuffer
     public:
     IndexBuffer(const u32 *data, u32 count);
 
-    void MakeActive() const;
-    void MakeInactive() const;
+    void Bind() const;
+    void Unbind() const;
 
     inline u32 GetCount() const { return count; }
 

@@ -7,12 +7,12 @@ IndexBuffer::IndexBuffer(const u32 *data, u32 count) : count{count}
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(u32), data, GL_STATIC_DRAW);
 }
 
-void IndexBuffer::MakeActive() const
+void IndexBuffer::Bind() const
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID);
 }
 
-void IndexBuffer::MakeInactive() const
+void IndexBuffer::Unbind() const
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

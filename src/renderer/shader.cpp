@@ -1,28 +1,9 @@
 #include "shader.h"
 
-Shader::Shader(const char *vertPath, const char *fragPath) : rendererID{0}, vertPath{vertPath}, fragPath{fragPath}
+// clang-format off
+Shader::Shader(const char *vertPath, const char *fragPath)
+    : rendererID{0}, vertPath{vertPath}, fragPath{fragPath}
 {
-    Generate(vertPath, fragPath);
-}
-
-// clang-format on
-
-void Shader::Generate(const char *vertPath, const char *fragPath)
-{
-    LOGINIT_COUT();
-
-    if(!vertPath)
-    {
-        Log(LOG_ERROR, FILE_INFO) << vertPath << " couldn't load";
-        return;
-    }
-
-    if(!fragPath)
-    {
-        Log(LOG_ERROR, FILE_INFO) << fragPath << " couldn't load";
-        return;
-    }
-
     std::string vShaderStr = Shader::ReadFileSource(vertPath);
     std::string fShaderStr = Shader::ReadFileSource(fragPath);
 
@@ -42,9 +23,13 @@ void Shader::Generate(const char *vertPath, const char *fragPath)
 
     GLint vertCompiled, fragCompiled, linked;
 
+    // Renderer::CheckOpenGLError(); // TODO: implement logging.
     glGetShaderiv(vShaderID, GL_COMPILE_STATUS, &vertCompiled);
     if(vertCompiled != 1)
-        Log(LOG_ERROR, FILE_INFO) << "vertex shader: " << GetProgramLog(vShaderID) << "\n";
+    {
+        // TODO: log error.
+        // Renderer::PrintProgramLog(vShader);
+    }
 
     // compile fragment shader.
     glCompileShader(fShaderID);
@@ -52,7 +37,10 @@ void Shader::Generate(const char *vertPath, const char *fragPath)
     // Renderer::CheckOpenGLError();
     glGetShaderiv(fShaderID, GL_COMPILE_STATUS, &fragCompiled);
     if(fragCompiled != 1)
-        Log(LOG_ERROR, FILE_INFO) << "fragment shader: " << GetProgramLog(fShaderID) << "\n";
+    {
+        // TODO: log error.
+        // Renderer::PrintProgramLog(fShader);
+    }
 
     rendererID = glCreateProgram();
 
@@ -64,11 +52,16 @@ void Shader::Generate(const char *vertPath, const char *fragPath)
     // Renderer::CheckOpenGLError();
     glGetProgramiv(rendererID, GL_LINK_STATUS, &linked);
     if(linked != 1)
-        Log(LOG_ERROR, FILE_INFO) << "shader program: " << GetProgramLog(rendererID) << "\n";
+    {
+        // TODO: log error.
+        // Renderer::PrintProgramLog(vfProgram);
+    }
 
     glDeleteShader(vShaderID);
     glDeleteShader(fShaderID);
 }
+
+// clang-format on
 
 std::string Shader::ReadFileSource(const char *filePath)
 {
@@ -86,45 +79,9 @@ std::string Shader::ReadFileSource(const char *filePath)
     return content;
 }
 
-void Shader::MakeActive() const
+void Shader::Bind() const
 {
     glUseProgram(rendererID);
-}
-
-// TODO: call this function for every open gl function call
-bool Shader::CheckOpenGLError()
-{
-    bool foundError = false;
-    int glErr = glGetError();
-
-    while(glErr != GL_NO_ERROR)
-    {
-
-        foundError = true;
-        glErr = glGetError();
-    }
-
-    return foundError;
-}
-
-std::string Shader::GetProgramLog(i32 id)
-{
-    std::string out;
-    int len = 0;
-    int chWritten = 0;
-    char *log;
-
-    glGetProgramiv(id, GL_INFO_LOG_LENGTH, &len);
-
-    if(len > 0)
-    {
-        log = (char *)malloc(len);
-        glGetProgramInfoLog(id, len, &chWritten, log);
-        out = log;
-        free(log);
-    }
-
-    return out;
 }
 
 Shader::~Shader()

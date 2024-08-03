@@ -151,12 +151,10 @@ int main()
 
     shader.Bind();
 
-    Texture texture(TEXTURE_PATH);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    Texture texture(TEXTURE_PATH, "container");
 
     Renderer *renderer = new Renderer();
+    renderer->EnableBlending();
 
     // wireframe mode
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

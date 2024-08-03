@@ -8,7 +8,7 @@
 class VertexArray
 {
     private:
-    u32 rendererID;
+    u32 ID;
 
     public:
     VertexArray();

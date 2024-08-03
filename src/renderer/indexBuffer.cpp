@@ -1,15 +1,22 @@
 #include "indexBuffer.h"
 
+IndexBuffer::IndexBuffer() {}
+
 IndexBuffer::IndexBuffer(const u32 *data, u32 count) : count{count}
 {
-    glGenBuffers(1, &rendererID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID);
+    Initialize(data, count);
+}
+
+void IndexBuffer::Initialize(const u32 *data, u32 count)
+{
+    glGenBuffers(1, &ID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(u32), data, GL_STATIC_DRAW);
 }
 
 void IndexBuffer::Bind() const
 {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
 }
 
 void IndexBuffer::Unbind() const
@@ -19,5 +26,5 @@ void IndexBuffer::Unbind() const
 
 IndexBuffer::~IndexBuffer()
 {
-    glDeleteBuffers(1, &rendererID);
+    glDeleteBuffers(1, &ID);
 }

@@ -11,7 +11,7 @@
 class Shader
 {
     private:
-    u32 rendererID;
+    u32 ID;
     std::string vertPath, fragPath;
     std::unordered_map<std::string, i32> uniformLocationCache;
 
@@ -21,7 +21,7 @@ class Shader
     public:
     Shader(const char *vertPath, const char *fragPath);
 
-    inline u32 GetID() const { return rendererID; }
+    inline u32 GetID() const { return ID; }
     void Bind() const;
 
     // clang-format off
@@ -31,7 +31,7 @@ class Shader
         if(uniformLocationCache.find(name) != uniformLocationCache.end())
             return uniformLocationCache[name];
         
-        i32 location = glGetUniformLocation(rendererID, name.c_str());
+        i32 location = glGetUniformLocation(ID, name.c_str());
 
         if(location == -1)
         {

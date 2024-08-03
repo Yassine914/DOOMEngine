@@ -7,13 +7,16 @@
 class Texture
 {
     private:
-    u32 rendererID;
     std::string filePath;
     u8 *localBuffer;
     i32 width, height, bpp; // bits per pixel
 
     public:
-    Texture(const std::string &path);
+    u32 ID;
+    std::string name;
+
+    public:
+    Texture(const std::string &path, const std::string &name);
 
     void Bind(u32 slot = 0) const;
     void Unbind() const;

@@ -3,15 +3,15 @@
 #include "../../thirdparty/include/stb_image.h"
 
 // clang-format off
-Texture::Texture(const std::string &path)
+Texture::Texture(const std::string &path, const std::string &name)
     :filePath{path}, localBuffer{nullptr}, 
-     width{0}, height{0}, bpp{0}
+     width{0}, height{0}, bpp{0}, name{name}
 {
     stbi_set_flip_vertically_on_load(true);
     localBuffer = stbi_load(path.c_str(), &width, &height, &bpp, 4);
 
-    glGenTextures(1, &rendererID);
-    glBindTexture(GL_TEXTURE_2D, rendererID);
+    glGenTextures(1, &ID);
+    glBindTexture(GL_TEXTURE_2D, ID);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -31,7 +31,7 @@ Texture::Texture(const std::string &path)
 void Texture::Bind(u32 slot /*= 0*/) const
 {
     glActiveTexture(GL_TEXTURE0 + slot);
-    glBindTexture(GL_TEXTURE_2D, rendererID);
+    glBindTexture(GL_TEXTURE_2D, ID);
 }
 
 void Texture::Unbind() const
@@ -41,5 +41,5 @@ void Texture::Unbind() const
 
 Texture::~Texture()
 {
-    glDeleteTextures(1, &rendererID);
+    glDeleteTextures(1, &ID);
 }

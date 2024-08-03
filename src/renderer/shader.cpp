@@ -2,7 +2,7 @@
 
 // clang-format off
 Shader::Shader(const char *vertPath, const char *fragPath)
-    : rendererID{0}, vertPath{vertPath}, fragPath{fragPath}
+    : ID{0}, vertPath{vertPath}, fragPath{fragPath}
 {
     std::string vShaderStr = Shader::ReadFileSource(vertPath);
     std::string fShaderStr = Shader::ReadFileSource(fragPath);
@@ -42,15 +42,15 @@ Shader::Shader(const char *vertPath, const char *fragPath)
         // Renderer::PrintProgramLog(fShader);
     }
 
-    rendererID = glCreateProgram();
+    ID = glCreateProgram();
 
-    glAttachShader(rendererID, vShaderID);
-    glAttachShader(rendererID, fShaderID);
+    glAttachShader(ID, vShaderID);
+    glAttachShader(ID, fShaderID);
 
-    glLinkProgram(rendererID);
+    glLinkProgram(ID);
 
     // Renderer::CheckOpenGLError();
-    glGetProgramiv(rendererID, GL_LINK_STATUS, &linked);
+    glGetProgramiv(ID, GL_LINK_STATUS, &linked);
     if(linked != 1)
     {
         // TODO: log error.
@@ -81,10 +81,10 @@ std::string Shader::ReadFileSource(const char *filePath)
 
 void Shader::Bind() const
 {
-    glUseProgram(rendererID);
+    glUseProgram(ID);
 }
 
 Shader::~Shader()
 {
-    glDeleteProgram(rendererID);
+    glDeleteProgram(ID);
 }

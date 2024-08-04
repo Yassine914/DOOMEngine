@@ -1,12 +1,10 @@
 #pragma once
 
 #include "../core/defines.h"
+#include "../core/logger.h"
 
-#include "vertexBuffer.h"
-#include "indexBuffer.h"
-#include "vertexArray.h"
-
-#include "shader.h"
+#include "../../thirdparty/include/glad/glad.h"
+#include <GLFW/glfw3.h>
 
 class Renderer
 {
@@ -26,5 +24,7 @@ class Renderer
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    void Draw(const VertexArray &va, const IndexBuffer &ib, const Shader &shader) const;
+    inline void RenderAllWireframe() { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
 };
+
+bool CheckOpenGLError();

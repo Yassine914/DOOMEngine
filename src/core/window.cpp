@@ -10,6 +10,12 @@ void Window::ErrorCallback(i32 error, const char *description)
     fprintf(stderr, "error: %s\n", description);
 }
 
+void OpenGLErrorCallback(u32 source, u32 type, u32 id, u32 severity, i32 length, const char *msg, const void *userParam)
+{
+    LOGINIT_COUT();
+    Log(LOG_ERROR) << "OpenGL: " << msg << "\n";
+}
+
 void Window::OnWindowResize(GLFWwindow *window, i32 width, i32 height)
 {
     glViewport(0, 0, width, height);
@@ -28,6 +34,8 @@ void Window::InitializeWindow()
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VRS_MAJOR);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VRS_MINOR);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
     glfwSetErrorCallback(ErrorCallback);
 
@@ -68,6 +76,12 @@ void Window::InitializeWindow()
         ErrorCallback(1, "couldn't load OpenGL");
     }
 
+    Log(LOG_INFO) << "OpenGL version: " << GLVersion.major << "." << GLVersion.minor << "\n";
+
+    // enable openGL error callback
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(OpenGLErrorCallback, 0);
+
     if(VSyncEnabled())
         glfwSwapInterval(1);
 
@@ -91,7 +105,6 @@ void Window::InitializeWindow()
         Log(LOG_INFO) << "joystick " << mainJoystick.GetName() << " is present\n";
     else
         Log(LOG_INFO) << "no joystick found.\n";
-
 }
 
 Window::~Window()

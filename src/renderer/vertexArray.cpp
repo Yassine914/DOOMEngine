@@ -3,6 +3,9 @@
 VertexArray::VertexArray()
 {
     glGenVertexArrays(1, &ID);
+    LOGINIT_COUT();
+    if(!glIsVertexArray(ID))
+        LOG(LOG_ERROR, "this VAO wasn't initialized\n");
 }
 
 void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &layout)
@@ -28,11 +31,6 @@ void VertexArray::AddBuffer(const VertexBuffer &vb, const VertexBufferLayout &la
     }
 
     // clang-format on
-}
-
-void VertexArray::Bind() const
-{
-    glBindVertexArray(ID);
 }
 
 void VertexArray::Unbind() const

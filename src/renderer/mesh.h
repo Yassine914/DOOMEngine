@@ -36,9 +36,11 @@ class Mesh
     inline IndexBuffer &GetIndexBuffer() { return ib; }
     inline VertexBufferLayout &GetVertexBufferLayout() { return layout; }
 
-    void Setup();
+    void Setup(Shader &shader);
 
-    void Render(Shader shader);
+    void Render(Shader &shader);
+
+    void Cleanup();
 
     ~Mesh() = default;
 };

@@ -16,16 +16,17 @@
 #include "io/joystick.h"
 #include "io/camera.h"
 
-#include "vendor/imgui/imgui.h"
-#include "vendor/imgui/imgui_impl_glfw.h"
-#include "vendor/imgui/imgui_impl_opengl3.h"
+#include "../thirdparty/include/imgui/imgui.h"
+#include "../thirdparty/include/imgui/imgui_impl_glfw.h"
+#include "../thirdparty/include/imgui/imgui_impl_opengl3.h"
 
 #include <iostream>
 
 #include "../thirdparty/include/glm/glm.hpp"
 #include "../thirdparty/include/glm/gtc/matrix_transform.hpp"
 
-#include "tests/testClearColor.h"
+#include "renderer/models/plane.hpp"
+#include "renderer/models/cube.hpp"
 
 #define WIN_WIDTH      640
 #define WIN_HEIGHT     480
@@ -34,8 +35,8 @@
 #define WIN_V_SYNC     true
 #define WIN_TITLE      "DOOM Engine v0.0.1"
 
-#define V_SHADER_PATH "res/shaders/vertShader.glsl"
-#define F_SHADER_PATH "res/shaders/fragShader.glsl"
+#define V_SHADER_PATH "res/shaders/basic.vs"
+#define F_SHADER_PATH "res/shaders/basic.fs"
 #define TEXTURE_PATH  "res/textures/container.jpg"
 
 // clang-format off
@@ -86,8 +87,13 @@ f32 cubeVertices[] = {
 
 u32 indices[] = 
 {  
-    0, 1, 3, // first triangle
-    1, 2, 3  // second triangle
+    0, 1, 2, 3, 4, 5, 6,
+    7, 8, 9, 10, 11, 12,
+    13, 14, 15, 16, 17,
+    18, 19, 20, 21, 22,
+    23, 24, 25, 26, 27,
+    28, 29, 30, 31, 32,
+    33, 34, 35
 };
 // clang-format on
 
@@ -97,10 +103,10 @@ void ProcessInput(Window *window, f32 deltaTime);
 // globals
 Camera *camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f));
 
-LOGINIT_COUT();
-
 int main()
 {
+    LOGINIT_COUT();
+
     f32 deltaTime = 0.0f;
     f32 lastFrame = 0.0f;
 
@@ -115,9 +121,6 @@ int main()
 
     window->InitializeWindow();
 
-    // NOTE: will remove cursor
-    //
-
     /// ----------------------- IMGUI INIT --------------------
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -129,26 +132,31 @@ int main()
     ImGui_ImplOpenGL3_Init();
     /// ----------------------- IMGUI INIT --------------------
 
+    u32 vao[1];
+    glGenVertexArrays(1, &vao[0]);
+    glad_glGenVertexArrays(1, &vao[0]);
+
+    LOG(LOG_DEBUG, "vertex array: " << vao[0] << ".\n");
+    if(glIsVertexArray(vao[0]))
+        LOG(LOG_DEBUG, "yay it's an actual vertex array\n");
+
+    exit(1);
+
     VertexArray va;
     VertexBuffer vb(cubeVertices, sizeof(cubeVertices));
-    // IndexBuffer ib(indices, 6);
+    IndexBuffer ib(indices, 36);
 
     va.Bind();
     vb.Bind();
-    // ib.Bind();
+    ib.Bind();
 
     VertexBufferLayout layout;
-    // positions
-    layout.Push<float>(3);
-    // colors NOTE: no colors in cube
-    // layout.Push<float>(3);
-    // texture coords
-    layout.Push<float>(2);
+    layout.Push<float>(3); // pos
+    layout.Push<float>(2); // tex
 
     va.AddBuffer(vb, layout);
 
     Shader shader(V_SHADER_PATH, F_SHADER_PATH);
-
     shader.Bind();
 
     Texture texture(TEXTURE_PATH, "container");
@@ -156,14 +164,11 @@ int main()
     Renderer *renderer = new Renderer();
     renderer->EnableBlending();
 
-    // wireframe mode
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    u32 test;
+    glGenVertexArrays(1, &test);
 
-    test::Test *currentTest = nullptr;
-    test::TestMenu *testMenu = new test::TestMenu(currentTest);
-    currentTest = testMenu;
-
-    testMenu->AddTest<test::ClearColor>("Clear Color");
+    if(!glIsVertexArray(test))
+        LOG(LOG_ERROR, "VAO not initialized\n");
 
     /// ----------- IMGUI VARS --------------
     f32 rotation[3] = {0.0f, 0.0f, 0.0f};
@@ -171,6 +176,12 @@ int main()
     glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 proj = glm::mat4(1.0f);
+
+    ///_____________ PLANE TEST _______________
+    // Plane *plane = new Plane;
+
+    // Cube cube;
+    // Shader cubeShader("res/shaders/plane.vs", "res/shaders/plane.fs");
 
     while(!window->WindowShouldClose())
     {
@@ -187,23 +198,6 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        if(currentTest)
-        {
-            currentTest->OnUpdate(0.0f);
-            currentTest->OnRender();
-
-            ImGui::Begin("TEST MENU");
-
-            if(currentTest != testMenu && ImGui::Button("<"))
-            {
-                delete currentTest;
-                currentTest = testMenu;
-            }
-
-            currentTest->OnImGuiRender();
-            ImGui::End();
-        }
-
         /// --------------------- MVP Matrices ------------------------
         glm::vec3 rot = glm::vec3(rotation[0], rotation[1], rotation[2]);
 
@@ -216,15 +210,23 @@ int main()
         f32 screenRatio = (f32)window->GetWidth() / (f32)window->GetHeight();
         glm::mat4 proj = glm::perspective(glm::radians(camera->zoom), screenRatio, 0.1f, 100.0f);
 
+        shader.Bind();
         shader.SetUniformMat4f("model", model);
         shader.SetUniformMat4f("view", view);
         shader.SetUniformMat4f("proj", proj);
 
         texture.Bind();
         va.Bind();
+        ib.Bind();
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        // renderer->Draw(va, ib, shader);
+        glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
+
+        // plane->shader.Bind();
+        // plane->shader.SetUniformMat4f("view", view);
+        // plane->shader.SetUniformMat4f("proj", proj);
+
+        // plane->Render();
+        // cube.Render(cubeShader);
 
         // ---------------------- IMGUI WINDOW -------------
         {
@@ -250,16 +252,6 @@ int main()
 
         glfwPollEvents();
         glfwSwapBuffers(window->GetWindow());
-    }
-
-    if(currentTest != testMenu)
-    {
-        delete currentTest;
-        delete testMenu;
-    }
-    else
-    {
-        delete currentTest;
     }
 
     ImGui_ImplOpenGL3_Shutdown();

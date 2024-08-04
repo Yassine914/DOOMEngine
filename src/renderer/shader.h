@@ -1,6 +1,10 @@
 #pragma once
 
 #include "../core/defines.h"
+#include "../core/logger.h"
+
+#include "renderer.h"
+
 #include "../../thirdparty/include/glad/glad.h"
 #include "../../thirdparty/include/glm/glm.hpp"
 
@@ -14,20 +18,36 @@ class Shader
     u32 ID;
     std::string vertPath, fragPath;
     std::unordered_map<std::string, i32> uniformLocationCache;
+    bool initialized;
 
     private:
     std::string ReadFileSource(const char *filePath);
 
     public:
+    Shader() : initialized{false} {}
+
+    void Initialize(const char *vertPath, const char *fragPath);
+
     Shader(const char *vertPath, const char *fragPath);
 
     inline u32 GetID() const { return ID; }
     void Bind() const;
+    void Unbind() const;
 
     // clang-format off
 
     inline i32 GetUniformLocation(const std::string &name)
     {
+        Bind();
+        LOGINIT_COUT();
+
+        if(!initialized)
+        {
+            Log(LOG_ERROR) << "tried to send a uniform without initializing the shader; uniform: " << name << "...\n";
+            return -1;
+        }
+        
+        
         if(uniformLocationCache.find(name) != uniformLocationCache.end())
             return uniformLocationCache[name];
         
@@ -35,11 +55,12 @@ class Shader
 
         if(location == -1)
         {
-            // TODO: log error
+            Log(LOG_ERROR) << "problem sending a uniform from program : " << ID << ".\n";
+            Log(LOG_ERROR) << "couldn't send uniform \"" << name << "\" to the shader.\n";
+            Log(LOG_ERROR) << "make sure you have the uniform set in the shader code.\n";
         }
 
         uniformLocationCache[name] = location;
-
         return location;
     }
 
@@ -79,6 +100,8 @@ class Shader
         glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
     }
     // clang-format on
+
+    std::string GetProgramLog(i32 id);
 
     ~Shader();
 };

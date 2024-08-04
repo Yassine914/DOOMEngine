@@ -104,8 +104,6 @@
         "README.md": true,
         "imgui.ini": true,
         ".clang-format": true,
-        "loggertest": true,
-        "include": true,
         ".vscode": true
     },
     "hide-files.files": [
@@ -114,8 +112,6 @@
         "README.md",
         "imgui.ini",
         ".clang-format",
-        "loggertest",
-        "include",
         ".vscode"
     ],
     "C_Cpp.default.includePath": [

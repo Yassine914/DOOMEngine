@@ -4,6 +4,16 @@
 Shader::Shader(const char *vertPath, const char *fragPath)
     : ID{0}, vertPath{vertPath}, fragPath{fragPath}
 {
+    Initialize(vertPath, fragPath);
+}
+
+// clang-format on
+
+void Shader::Initialize(const char *vertPath, const char *fragPath)
+{
+    this->vertPath = vertPath;
+    this->fragPath = fragPath;
+
     std::string vShaderStr = Shader::ReadFileSource(vertPath);
     std::string fShaderStr = Shader::ReadFileSource(fragPath);
 
@@ -23,24 +33,18 @@ Shader::Shader(const char *vertPath, const char *fragPath)
 
     GLint vertCompiled, fragCompiled, linked;
 
-    // Renderer::CheckOpenGLError(); // TODO: implement logging.
+    LOGINIT_COUT();
+
     glGetShaderiv(vShaderID, GL_COMPILE_STATUS, &vertCompiled);
     if(vertCompiled != 1)
-    {
-        // TODO: log error.
-        // Renderer::PrintProgramLog(vShader);
-    }
+        Log(LOG_ERROR) << GetProgramLog(vShaderID) << "\n";
 
     // compile fragment shader.
     glCompileShader(fShaderID);
 
-    // Renderer::CheckOpenGLError();
     glGetShaderiv(fShaderID, GL_COMPILE_STATUS, &fragCompiled);
     if(fragCompiled != 1)
-    {
-        // TODO: log error.
-        // Renderer::PrintProgramLog(fShader);
-    }
+        Log(LOG_ERROR) << GetProgramLog(fShaderID) << "\n";
 
     ID = glCreateProgram();
 
@@ -49,24 +53,28 @@ Shader::Shader(const char *vertPath, const char *fragPath)
 
     glLinkProgram(ID);
 
-    // Renderer::CheckOpenGLError();
     glGetProgramiv(ID, GL_LINK_STATUS, &linked);
     if(linked != 1)
-    {
-        // TODO: log error.
-        // Renderer::PrintProgramLog(vfProgram);
-    }
+        Log(LOG_ERROR) << GetProgramLog(ID) << "\n";
+
+    if(CheckOpenGLError())
+        Log(LOG_ERROR, FILE_INFO) << "OpenGL Error\n";
 
     glDeleteShader(vShaderID);
     glDeleteShader(fShaderID);
-}
 
-// clang-format on
+    initialized = true;
+}
 
 std::string Shader::ReadFileSource(const char *filePath)
 {
+    LOGINIT_COUT();
+
     std::string content;
     std::ifstream fileStream(filePath, std::ios::in);
+    if(!fileStream.is_open() || fileStream.eof())
+        Log(LOG_ERROR) << "SHADER: couldn't parse file with path: " << filePath << ".\n";
+
     std::string line = "";
 
     while(!fileStream.eof())
@@ -81,7 +89,37 @@ std::string Shader::ReadFileSource(const char *filePath)
 
 void Shader::Bind() const
 {
-    glUseProgram(ID);
+    LOGINIT_COUT();
+
+    if(!initialized)
+        Log(LOG_ERROR) << "tried to use an unitialized shader...\n";
+    else
+        glUseProgram(ID);
+}
+
+void Shader::Unbind() const
+{
+    glUseProgram(0);
+}
+
+std::string Shader::GetProgramLog(i32 id)
+{
+    std::string out;
+    int len = 0;
+    int chWritten = 0;
+    char *log;
+
+    glGetProgramiv(id, GL_INFO_LOG_LENGTH, &len);
+
+    if(len > 0)
+    {
+        log = (char *)malloc(len);
+        glGetProgramInfoLog(id, len, &chWritten, log);
+        out = log;
+        free(log);
+    }
+
+    return out;
 }
 
 Shader::~Shader()

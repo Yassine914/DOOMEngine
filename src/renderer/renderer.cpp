@@ -1,11 +1,16 @@
 #include "renderer.h"
 
-void Renderer::Draw(const VertexArray &va, const IndexBuffer &ib, const Shader &shader) const
+bool CheckOpenGLError()
 {
-    shader.Bind();
-    va.Bind();
-    ib.Bind();
+    bool foundError = false;
+    int glErr = glGetError();
 
-    glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
+    while(glErr != GL_NO_ERROR)
+    {
+
+        foundError = true;
+        glErr = glGetError();
+    }
+
+    return foundError;
 }
-

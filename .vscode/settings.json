@@ -120,4 +120,5 @@
     "C_Cpp.workspaceSymbols": "All",
     "C_Cpp.autocomplete": "default",
     "C_Cpp.autoAddFileAssociations": true,
+    "workbench.editor.showTabs": "single",
 }

@@ -100,7 +100,6 @@
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
         "LICENSE": true,
-        ".gitignore": true,
         "README.md": true,
         "imgui.ini": true,
         ".clang-format": true,
@@ -108,7 +107,6 @@
     },
     "hide-files.files": [
         "LICENSE",
-        ".gitignore",
         "README.md",
         "imgui.ini",
         ".clang-format",

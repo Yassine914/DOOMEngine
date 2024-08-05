@@ -7,8 +7,8 @@ echo      by Yassin Shehab
 echo ----------------------------
 echo.
 
-mkdir bin/ > nul
-mkdir obj/ > nul
+mkdir bin
+mkdir obj
 
 set assembly=DoomEngine
 
@@ -38,7 +38,7 @@ echo.
 
 popd
 
-set staticLibs=-lglad -lglfw3
+set staticLibs=-lglfw3
 set dynamicLibs=-limgui
 
 echo compiling source code...
@@ -57,7 +57,7 @@ set objFiles=
 
 for /r %%f in (*.o) do (
     set filepath=%%~f
-    
+
     set "filepath=!filepath!"
     set objFiles=!objFiles! !filepath:~36!
 )
@@ -65,8 +65,7 @@ for /r %%f in (*.o) do (
 set linkerFlags=-Lbin/ 
 set linkingLibs=-lopengl32 -luser32 -lgdi32
 
-clang++ %objFiles% -o ./bin/%assembly%.exe %linkerFlags% %staticLibs% %dynamicLibs%
-
+clang++ %objFiles% -o ./bin/%assembly%.exe %linkerFlags% %staticLibs% %dynamicLibs% %linkingLibs% -v
 
 exit
 @REM for /r %%f in (*.o) do (

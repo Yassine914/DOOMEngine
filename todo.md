@@ -7,3 +7,4 @@
 - [ ] allow rendering multiple objects.
 - [ ] make rendering objects dynamic.
 - [ ] create a 3D camera.
+- [ ] try out CMake again...

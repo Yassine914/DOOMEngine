@@ -7,8 +7,8 @@
 #include "keyboard.h"
 #include "joystick.h"
 
-#include "../../thirdparty/include/glm/glm.hpp"
-#include "../../thirdparty/include/glm/gtc/matrix_transform.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 enum class CameraDirection
 {

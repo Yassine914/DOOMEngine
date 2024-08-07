@@ -104,6 +104,7 @@ class Logger
     Logger(std::ostream &os)
         :outStream{os}, 
          logLevel{LogLevel::INFO},
+         currentLevel{LogLevel::INFO},
          outType{OutputType::CONSOLE}
     {
 

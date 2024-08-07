@@ -16,11 +16,6 @@ typedef signed long long i64;
 typedef float f32;
 typedef double f64;
 
-// boolean types
-typedef char b8;
-#define true 1
-#define false 0
-
 // define static assertions
 #if defined(__clang__) || defined(__gcc__) || defined(__GNUC__)
     #define ST_ASSERT _Static_assert

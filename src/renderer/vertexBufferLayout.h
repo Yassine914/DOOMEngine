@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../core/defines.h"
-#include "../../thirdparty/include/glad/glad.h"
+#include <glad/glad.h>
 
 #include <vector>
 

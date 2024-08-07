@@ -1,6 +1,6 @@
 #include "texture.h"
 
-#include "../../thirdparty/include/stb_image.h"
+#include <stb_image/stb_image.h>
 
 // clang-format off
 Texture::Texture(const std::string &path, const std::string &name)

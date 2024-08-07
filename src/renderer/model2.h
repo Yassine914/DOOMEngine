@@ -1,10 +1,10 @@
-#include "../core/defines.h"
-#include "../core/logger.h"
+#include "core/defines.h"
+#include "core/logger.h"
 
 #include "mesh2.h"
 
-#include "../../thirdparty/include/glm/glm.hpp"
-#include "../../thirdparty/include/glm/gtc/matrix_transform.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class Model2
 {

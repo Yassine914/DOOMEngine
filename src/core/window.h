@@ -4,7 +4,7 @@
 #include "logger.h"
 #include <string>
 
-#include "../../thirdparty/include/glad/glad.h"
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "../io/keyboard.h"

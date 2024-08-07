@@ -1,4 +1,4 @@
-#include "core/defines.h"
+/*#include "core/defines.h"
 #include "core/logger.h"
 #include "core/window.h"
 
@@ -11,29 +11,26 @@
 
 #include "renderer/renderer.h"
 
-#include "io/keyboard.h"
-#include "io/mouse.h"
-#include "io/joystick.h"
 #include "io/camera.h"
 
-#include "../thirdparty/include/imgui/imgui.h"
-#include "../thirdparty/include/imgui/imgui_impl_glfw.h"
-#include "../thirdparty/include/imgui/imgui_impl_opengl3.h"
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
 
 #include <iostream>
 
-#include "../thirdparty/include/glm/glm.hpp"
-#include "../thirdparty/include/glm/gtc/matrix_transform.hpp"
+// #include <glm/glm.hpp>
+// #include <glm/gtc/matrix_transform.hpp>
 
 #include "renderer/models/plane.hpp"
 #include "renderer/models/cube.hpp"
 
-#define WIN_WIDTH      640
-#define WIN_HEIGHT     480
-#define WIN_FULLSCREEN false
-#define WIN_RESIZEABLE true
-#define WIN_V_SYNC     true
-#define WIN_TITLE      "DOOM Engine v0.0.1"
+constexpr auto WIN_WIDTH = 640;
+constexpr auto WIN_HEIGHT = 480;
+constexpr auto WIN_FULLSCREEN = false;
+constexpr auto WIN_RESIZEABLE = true;
+constexpr auto WIN_V_SYNC = true;
+constexpr auto WIN_TITLE = "DOOM Engine v0.0.1";
 
 #define V_SHADER_PATH "res/shaders/basic.vs"
 #define F_SHADER_PATH "res/shaders/basic.fs"
@@ -85,8 +82,8 @@ f32 cubeVertices[] = {
     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-u32 indices[] = 
-{  
+u32 indices[] =
+{
     0, 1, 2, 3, 4, 5, 6,
     7, 8, 9, 10, 11, 12,
     13, 14, 15, 16, 17,
@@ -132,12 +129,11 @@ int main()
     ImGui_ImplOpenGL3_Init();
     /// ----------------------- IMGUI INIT --------------------
 
-    u32 vao[1];
-    glGenVertexArrays(1, &vao[0]);
-    glad_glGenVertexArrays(1, &vao[0]);
+    u32 vao;
+    glGenVertexArrays(1, &vao);
 
-    LOG(LOG_DEBUG, "vertex array: " << vao[0] << ".\n");
-    if(glIsVertexArray(vao[0]))
+    LOG(LOG_DEBUG, "vertex array: " << vao << ".\n");
+    if(glIsVertexArray(vao))
         LOG(LOG_DEBUG, "yay it's an actual vertex array\n");
 
     exit(1);
@@ -311,3 +307,5 @@ void ProcessInput(Window *window, f32 deltaTime)
     if(scrollDY != 0)
         camera->UpdateCameraZoom(scrollDY);
 }
+
+*/

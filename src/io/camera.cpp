@@ -1,4 +1,12 @@
+#include "../core/defines.h"
 #include "camera.h"
+
+#include <cmath>
+
+#include <glm/detail/func_geometric.inl>
+#include <glm/detail/func_trigonometric.inl>
+#include <glm/ext/matrix_transform.inl>
+#include <glm/fwd.hpp>
 
 // clang-format off
 
@@ -59,7 +67,11 @@ void Camera::UpdateCameraPos(CameraDirection dir, f64 deltaTime)
 void Camera::UpdateCameraZoom(f64 dy)
 {
     zoom -= dy;
-    zoom = std::clamp(zoom, 1.0f, 45.0f);
+
+    if(zoom > 45.0f)
+        zoom = 45.0f;
+    else if(zoom < 1.0f)
+        zoom = 1.0f;
 }
 
 glm::mat4 Camera::GetViewMatrix()
